@@ -1,3 +1,5 @@
+//Ветка для литиевой батареи, базовая
+
 #include "stm8s.h"
 #include "string.h"
 #include "main.h"
