@@ -1,3 +1,5 @@
+//Ветка для счетчика электроэнергии
+
 #include "stm8s.h"
 #include "string.h"
 #include "main.h"
