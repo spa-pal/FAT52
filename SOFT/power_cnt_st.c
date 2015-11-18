@@ -20,23 +20,23 @@ const unsigned char crc8tab[256] = {
 0x11, 0xa4, 0xce, 0x7b, 0x1a, 0xaf, 0xc5, 0x70, 0x07, 0xb2, 0xd8, 0x6d, 0x0c, 0xb9, 0xd3, 0x66 };
 
 
-volatile unsigned int UART1Status;
+@near volatile unsigned int UART1Status;
 volatile unsigned int UART1TxEmpty = 1;
 volatile unsigned char UART1Buffer[BUFSIZE];
 volatile unsigned int UART1Count = 0;
 
-char tx_wd_cnt=100;
+//char tx_wd_cnt=100;
 
-unsigned char rx_wr_index1,rx_rd_index1,rx_counter1;
-unsigned char tx_wr_index1,tx_rd_index1,tx_counter1;
-char rx_buffer1[RX_BUFFER_SIZE1];
-char tx_buffer1[TX_BUFFER_SIZE1];
+//unsigned char rx_wr_index1,rx_rd_index1,rx_counter1;
+//unsigned char tx_wr_index1,tx_rd_index1,tx_counter1;
+//char rx_buffer1[RX_BUFFER_SIZE1];
+//char tx_buffer1[TX_BUFFER_SIZE1];
 
 //tx_stat_enum tx_stat=tsOFF;
 
-char sleep_buff[50];
-char sleep_in;
-char sleep_len;
+@near char sleep_buff[50];
+@near char sleep_in;
+@near char sleep_len;
 char rx_read_power_cnt_phase=0;
 
 char sum_pow_dig[20];
@@ -47,6 +47,19 @@ char cur_pow_dig[20];
 char cur_pow_dig_cnt;
 char bCP;
 long cur_pow_102m;
+
+//-----------------------------------------------
+//Работа со счетчиком 102m
+signed long power_summary=0;
+signed short power_current=0;
+@near char tot_pow_buff[10];
+@near char tot_pow_buff_ptr,tot_pow_buff_cnt;
+@near char tot_pow_buff_ready;
+@near char curr_pow_buff[10];
+@near char curr_pow_buff_ptr,curr_pow_buff_cnt;
+@near char curr_pow_buff_ready;
+@near char ppp;
+
 
 //-----------------------------------------------
 unsigned int UARTInit( unsigned int PortNum, unsigned int baudrate )
@@ -66,275 +79,7 @@ return( 0 );
 *****************************************************************************/
 void UART1_IRQHandler (void) 
 {
-unsigned char IIRValue, LSRValue;
-unsigned char  Dummy = Dummy;
-	
-///IIRValue = LPC_UART1->IIR;
 
-	//LPC_GPIO0->FIODIR|=(1<<3);
-	
-	//LPC_GPIO0->FIODIR|=(1<<2);
-	
-    
-IIRValue >>= 1;			/* skip pending bit in IIR */
-IIRValue &= 0x07;			/* check bit 1~3, interrupt identification */
-
-if ( IIRValue == IIR_RLS )		/* Receive Line Status */
-     {
-	//LPC_GPIO0->FIOPIN|=(1<<3);
-	///LSRValue = LPC_UART1->LSR;
-	/* Receive Line Status */
-	///if ( LSRValue & (LSR_OE|LSR_PE|LSR_FE|LSR_RXFE|LSR_BI) )
-	///{
-	  /* There are errors or break interrupt */
-	  /* Read LSR will clear the interrupt */
-	  ///UART1Status = LSRValue;
-	  ///Dummy = LPC_UART1->RBR;		/* Dummy read on RX to clear 
-							///	interrupt, then bail out */
-	 /// return;
-	///}
-	if ( LSRValue & LSR_RDR )	/* Receive Data Ready */			
-	     {
-	     /* If no error on RLS, normal ready, save into the data buffer. */
-	     /* Note: read RBR will clear the interrupt */
-	     UART1Buffer[UART1Count] = LPC_UART1->RBR;
-	     UART1Count++;
-	     if ( UART1Count == BUFSIZE )
-	          {
-	     	UART1Count = 0;		/* buffer overflow */
-	          }	
-	     }
-     }
-else if ( IIRValue == IIR_RDA )	/* Receive Data Available */
-     {
-     char temp;
-   
-	//LPC_GPIO0->FIOPIN|=(1<<2);
-
-	temp = LPC_UART1->RBR;
-
-     if(tx_stat==tsOFF)
-          {
-
-          gran_char(&rx_wr_index1,0,RX_BUFFER_SIZE1); 
-          rx_buffer1[rx_wr_index1]=temp;
-		  if(rx_read_power_cnt_phase==100)
-		  	{
-          	if(temp==0xc0)
-               {
-               //uart_plazma[0]++;
-               if   (
-                    (rx_wr_index1>1)
-                    )
-                    {
-                    signed char i_,begin_i;
-                    //uart_plazma[0]=rx_wr_index1;
-                    for(i_=rx_wr_index1-1;i_>=0;i_--)
-                         {
-                         if(rx_buffer1[i_]==0xc0)
-                              {
-                              begin_i=i_;
-                              sleep_len=rx_wr_index1-begin_i+1;
-                              for(i_=0;i_<=(rx_wr_index1-begin_i);i_++)
-                                   {
-                                   sleep_buff[i_]=rx_buffer1[begin_i+i_];
-                                   }
-                              sleep_in=1;
-                              rx_wr_index1=0;
-                              //uart_plazma[0]=sleep_buff[13];
-                              break;
-                              }
-                         }
-                    }
-               
-               
-               //uart_plazma[0]++;
-               }
-			}
-	else if(rx_read_power_cnt_phase==1)
-		{
-		LPC_GPIO0->FIODIR|=(1<<19);
-		LPC_GPIO0->FIOPIN^=(1<<19); 
-
-		if((rx_buffer1[rx_wr_index1]==0x0a))
-			{
-					LPC_GPIO0->FIODIR|=(1<<19);
-		LPC_GPIO0->FIOPIN^=(1<<19);
-			}
-
-		if((rx_buffer1[rx_wr_index1]==0x0a)&&(rx_buffer1[6]==0xc5))
-			{
-			rx_read_power_cnt_phase=2;
-
-			}
-		}
-	else if(rx_read_power_cnt_phase==3)
-		{
-		if((rx_buffer1[rx_wr_index1]==0x03)&&(rx_buffer1[0]==0x81))
-			{
-			rx_read_power_cnt_phase=4;
-			}
-		}
-	else if(rx_read_power_cnt_phase==4)
-		{
-		//if((rx_buffer[rx_wr_index]==0x03)&&(rx_buffer[0]==0x81))
-			{
-			rx_read_power_cnt_phase=5;
-			}
-		}
-	else if(rx_read_power_cnt_phase==6)
-		{
-		if(((rx_buffer1[rx_wr_index1]&0x7f)=='('))
-			{
-			rx_read_power_cnt_phase=7;
-			tot_pow_buff_ptr=0;
-			tot_pow_buff[0]=0;
-			tot_pow_buff[1]=0;
-			tot_pow_buff[2]=0;
-			tot_pow_buff[3]=0;
-			tot_pow_buff[4]=0;
-			tot_pow_buff[5]=0;
-			tot_pow_buff[6]=0;
-			tot_pow_buff[7]=0;
-			tot_pow_buff[8]=0;
-			tot_pow_buff[9]=0;
-			}
-		}	
-	else if(rx_read_power_cnt_phase==7)
-		{
-		if(((rx_buffer1[rx_wr_index1]&0x7f)==')'))
-			{
-			rx_read_power_cnt_phase=8;
-			tot_pow_buff_cnt=tot_pow_buff_ptr;
-			tot_pow_buff_ready=1;
-			}
-		else 
-			{
-			tot_pow_buff[tot_pow_buff_ptr]=(rx_buffer1[rx_wr_index1]&0x7f);
-			tot_pow_buff_ptr++;
-			}
-		}
-		
-	else if(rx_read_power_cnt_phase==8)
-		{
-		if(((rx_buffer1[rx_wr_index1]&0x7f)==0x03))
-			{
-			rx_read_power_cnt_phase=9;
-			}
-		}
-	else if(rx_read_power_cnt_phase==9)
-		{
-		//if((rx_buffer[rx_wr_index]==0x03)&&(rx_buffer[0]==0x81))
-			{
-			rx_read_power_cnt_phase=10;
-			}
-		}
-		
-	else if(rx_read_power_cnt_phase==11)
-		{
-		if(((rx_buffer1[rx_wr_index1]&0x7f)=='('))
-			{
-			rx_read_power_cnt_phase=12;
-			curr_pow_buff_ptr=0;
-			curr_pow_buff[0]=0;
-			curr_pow_buff[1]=0;
-			curr_pow_buff[2]=0;
-			curr_pow_buff[3]=0;
-			curr_pow_buff[4]=0;
-			curr_pow_buff[5]=0;
-			curr_pow_buff[6]=0;
-			curr_pow_buff[7]=0;
-			curr_pow_buff[8]=0;
-			curr_pow_buff[9]=0;
-			}
-		}	
-	else if(rx_read_power_cnt_phase==12)
-		{
-		if(((rx_buffer1[rx_wr_index1]&0x7f)==')'))
-			{
-			rx_read_power_cnt_phase=13;
-			curr_pow_buff_cnt=curr_pow_buff_ptr;
-			curr_pow_buff_ready=1;
-			}
-		else 
-			{
-			curr_pow_buff[curr_pow_buff_ptr]=(rx_buffer1[rx_wr_index1]&0x7f);
-			curr_pow_buff_ptr++;
-			}
-
-		}
-		
-	else if(rx_read_power_cnt_phase==13)
-		{
-		if(((rx_buffer1[rx_wr_index1]&0x7f)==0x03))
-			{
-			rx_read_power_cnt_phase=14;
-			}
-		}				
-/*		if(temp==0xca)
-			{
-			char temp_rx_wr_index;
-			
-			temp_rx_wr_index=rx_wr_index;
-			temp_rx_wr_index-=5;
-			if(temp_rx_wr_index<0) temp_rx_wr_index+=RX_BUFFER_SIZE;
-			if(rx_buffer[temp_rx_wr_index]==0xac)
-				{
-				bTRANSMIT_TO_STEND=1;
-				power_cnt_block=30;
-				}
-
-	
-			} */
-		
-
-	rx_wr_index1++;
-
-	}
-
-
-     }
-else if ( IIRValue == IIR_CTI )	/* Character timeout indicator */
-     {
-	/* Character Time-out indicator */
-	///UART1Status |= 0x100;		/* Bit 9 as the CTI error */
-     }
-else if ( IIRValue == IIR_THRE )	/* THRE, transmit holding register empty */
-     {
-	/* THRE interrupt */
-	LSRValue = LPC_UART1->LSR;		/* Check status in the LSR to see if
-								valid data in U0THR or not */
-	if ( LSRValue & LSR_THRE )
-	     {
-	     UART1TxEmpty = 1;
-
-	     if (tx_counter1)
-   		     {
-   			--tx_counter1;
-   		     LPC_UART1->THR=tx_buffer1[tx_rd_index1];
-   		     if (++tx_rd_index1 == TX_BUFFER_SIZE1) tx_rd_index1=0;
-          
-          	tx_wd_cnt=100;
-   		     }
-   	     else 
-		     {
-               SET_REG(LPC_PINCON->PINSEL1,0,(18-16)*2,2); //Вход PV у 485
-               LPC_GPIO0->FIODIR|=(1<<18);
-               LPC_GPIO0->FIOCLR|=(1<<18);
-
-				tx_stat_off_cnt=3;
-
-               
-		     }
-          }
-	else
-	     {
-	     UART1TxEmpty = 0;
-	     }
-     }
-
- 	//LPC_GPIO0->FIOPIN&=~(1<<3);
-	//LPC_GPIO0->FIOPIN&=~(1<<2);
 
 }
 
@@ -370,145 +115,17 @@ return r;
 } 
 
 
-//-----------------------------------------------
-void uart_out_adr1 (char *ptr, char len)
-{
-char UOB[110];
-char i,t=0;
-
-for(i=0;i<len;i++)
-	{
-	UOB[i]=ptr[i];
-	}
-	
-
-SET_REG(LPC_PINCON->PINSEL1,0,(18-16)*2,2); //Вход PV у 485
-LPC_GPIO0->FIODIR|=(1<<18);
-LPC_GPIO0->FIOSET|=(1<<18);
-
-tx_stat=tsON;
-
-for (i=0;i<len;i++)
-	{
-	putchar1(UOB[i]);
-	}   
-}
-
-//-----------------------------------------------
-void putchar1(char c)
-{
-while (tx_counter1 == TX_BUFFER_SIZE1);
-if (tx_counter1 || ((LPC_UART1->LSR & 0x60)==0))
-   {
-   tx_buffer1[tx_wr_index1]=c;
-   if (++tx_wr_index1 == TX_BUFFER_SIZE1) tx_wr_index1=0;
-   ++tx_counter1;
-   }
-else 
-	{
-
-
-	LPC_UART1->THR=c;
-	tx_wd_cnt=100;
-	}
-}
-
-
-//-----------------------------------------------
-void read_current_power(void)
-{
-char command_with_crc[20],command_with_crc_with_sleep[20],len;
-
-command_with_crc[0]=0xc0;
-command_with_crc[1]=0x48;
-command_with_crc[2]=power_cnt_adrl;
-command_with_crc[3]=power_cnt_adrh;
-command_with_crc[4]=0;
-command_with_crc[5]=0;
-
-command_with_crc[6]=0;
-command_with_crc[7]=0;
-command_with_crc[8]=0;
-command_with_crc[9]=0;
-
-command_with_crc[10]=0xd0;
-
-command_with_crc[11]=0x01;
-command_with_crc[12]=0x32;
-
-command_with_crc[13]=power_cnt_crc(command_with_crc,13);
-command_with_crc[14]=0xc0;
-
-
-len=sleep_coding(command_with_crc,command_with_crc_with_sleep,15);
-
-uart_out_adr1(command_with_crc_with_sleep,len);
-
-rx_read_power_cnt_phase=100;
-}
-
-
-//-----------------------------------------------
-void read_summary_power_(void)
-{
-char command_with_crc[20];
-
-command_with_crc[0]=0xaf;  // /
-command_with_crc[1]=0x3f;  // ?
-command_with_crc[2]=0x21;  // !
-command_with_crc[3]=0x8d;  // CR
-command_with_crc[4]=0x0a;  // LF
-
-uart_out_adr1(command_with_crc,5);
-
-rx_wr_index1=0;
-rx_read_power_cnt_phase=1;
-}
 
 
 
 
-//-----------------------------------------------
-void read_current_power_(void)
-{
-
-}
 
 
-//-----------------------------------------------
-void read_summary_power(void)
-{
-char command_with_crc[20],command_with_crc_with_sleep[20],len;
-
-command_with_crc[0]=0xc0;
-command_with_crc[1]=0x48;
-command_with_crc[2]=power_cnt_adrl;
-command_with_crc[3]=power_cnt_adrh;
-command_with_crc[4]=0;
-command_with_crc[5]=0;
-
-command_with_crc[6]=0;
-command_with_crc[7]=0;
-command_with_crc[8]=0;
-command_with_crc[9]=0;
-
-command_with_crc[10]=0xd1;
-
-command_with_crc[11]=0x01;
-command_with_crc[12]=0x31;
-
-command_with_crc[13]=0x00;
-
-command_with_crc[14]=power_cnt_crc(command_with_crc,14);
-command_with_crc[15]=0xc0;
 
 
-len=sleep_coding(command_with_crc,command_with_crc_with_sleep,16);
 
-uart_out_adr1(command_with_crc_with_sleep,len);
 
-rx_read_power_cnt_phase=100;
-}
+
 
 
 //-----------------------------------------------
@@ -600,9 +217,9 @@ if(sleep_pure_buff[len_-2]==power_cnt_crc(sleep_pure_buff,len_-2))
      if   (
           (sleep_pure_buff[1]==0x48)&&
           (sleep_pure_buff[2]==0)&&
-          (sleep_pure_buff[3]==0)&&
-          (sleep_pure_buff[4]==power_cnt_adrl)&&
-          (sleep_pure_buff[5]==power_cnt_adrh)
+          (sleep_pure_buff[3]==0)//&&
+///          (sleep_pure_buff[4]==power_cnt_adrl)&&
+///          (sleep_pure_buff[5]==power_cnt_adrh)
           )
 
           {

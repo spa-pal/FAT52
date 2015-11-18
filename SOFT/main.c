@@ -5,6 +5,7 @@
 #include "main.h"
 #include <ctype.h>
 #include <math.h>
+#include "power_cnt_st.h"
 
 char t0_cnt0=0,t0_cnt1=0,t0_cnt2=0,t0_cnt3=0,t0_cnt4=0;
 _Bool b100Hz, b10Hz, b5Hz, b2Hz, b1Hz,bBAT_REQ;
@@ -44,7 +45,7 @@ signed short I,Un,Ui,Udb;
 signed char T;
 //@eeprom signed short ee_K[4][2];
 
-@near signed short adc_buff[10][16],adc_buff_[10];
+
 char adc_ch,adc_cnt;
 signed short adc_plazma_short,adc_plazma[5];
 char led_ind_cnt;
@@ -89,6 +90,7 @@ signed short plazma_int[3];
 
 short rs485_rx_cnt;
 char bRX485;
+char power_net_cnt=3;
 
 //@near short max_cell_volt[7];
 //@near short min_cell_volt[7];
@@ -110,6 +112,7 @@ _Bool bRS485ERR;
 char transmit_cnt_number; 	//—четчик батарей на передачу, считает от 0 до 6 (7 батарей)
 
 @near char bat_mod_dump[7][40];
+short delayCnt;
 
 
 
@@ -127,6 +130,94 @@ if (*adr<min) *adr=min;
 if (*adr>max)  *adr=max; 
 }
 
+
+
+//-----------------------------------------------
+void matemath(void)
+{
+unsigned long tempUL; 
+
+
+if(tot_pow_buff_ready)
+	{
+	char i;
+	signed long temp_SL_;
+
+	temp_SL_=0;
+	i=tot_pow_buff_cnt/*-1*/;
+
+	i--;
+	temp_SL_+=(1L*(signed long)(tot_pow_buff[i]-0x30));
+	
+	i--;
+	temp_SL_+=(10L*(signed long)(tot_pow_buff[i]-0x30));
+	
+	i--;
+	
+	i--;
+	temp_SL_+=(100L*(signed long)(tot_pow_buff[i]-0x30));
+	
+	if(i)
+		{
+		i--;
+		temp_SL_+=(1000L*(signed long)(tot_pow_buff[i]-0x30));
+		if(i)
+			{
+			i--;
+			temp_SL_+=(10000L*(signed long)(tot_pow_buff[i]-0x30));
+			if(i)
+				{
+				i--;
+				temp_SL_+=(100000L*(signed long)(tot_pow_buff[i]-0x30));
+				if(i)
+					{
+					i--;
+					temp_SL_+=(1000000L*(signed long)(tot_pow_buff[i]-0x30));
+					if(i)
+						{
+						i--;
+						temp_SL_+=(10000000L*(signed long)(tot_pow_buff[i]-0x30));
+						}						
+					}
+				}			
+			}			
+		}	
+
+	power_summary=temp_SL_;
+	tot_pow_buff_ready=0;
+	}
+
+if(curr_pow_buff_ready)
+	{
+	char i;
+	signed long temp_SL_;
+
+	temp_SL_=0;
+	i=curr_pow_buff_cnt-3;
+
+	i--;
+	temp_SL_+=(1L*(signed long)(curr_pow_buff[i]-0x30));
+	
+	i--;
+	temp_SL_+=(10L*(signed long)(curr_pow_buff[i]-0x30));
+	
+	i--;
+	temp_SL_+=(100L*(signed long)(curr_pow_buff[i]-0x30));
+	
+	i--;
+	
+	i--;	 
+	temp_SL_+=(1000L*(signed long)(curr_pow_buff[i]-0x30));
+	
+	if(i)
+		{
+		i--;
+		temp_SL_+=(1000L*(signed long)(curr_pow_buff[i]-0x30));
+		}
+	power_current=(signed short)temp_SL_;
+	curr_pow_buff_ready=0; 
+	}
+}
 
 
 
@@ -156,8 +247,8 @@ GPIOB->CR2&=~(1<<7);
 	
 UART1->CR1&=~UART1_CR1_M;					
 UART1->CR3|= (0<<4) & UART1_CR3_STOP;  	
-UART1->BRR2= 0x09;
-UART1->BRR1= 0x20;
+UART1->BRR2= 0x02;
+UART1->BRR1= 0x41;
 UART1->CR2|= UART1_CR2_TEN | UART1_CR2_REN | UART1_CR2_RIEN/*| UART2_CR2_TIEN*/ ;	
 }
 
@@ -444,16 +535,16 @@ char temp,i;
 signed temp_S;
 int tempI;
 
-	GPIOD->DDR|=(1<<7);
+	/*GPIOD->DDR|=(1<<7);
 	GPIOD->CR1|=(1<<7);
 	GPIOD->CR2&=~(1<<7);	
-	GPIOD->ODR^=(1<<7);
+	GPIOD->ODR^=(1<<7);*/
 
 //if((mess[0]==1)&&(mess[1]==2)&&(mess[2]==3)&&(mess[3]==4)&&(mess[4]==5)&&(mess[5]==6)&&(mess[6]==7)&&(mess[7]==8))can_transmit1(1,2,3,4,5,6,7//,8);
 
 //adress=1;
 
-if((mess[6]==19)&&(mess[7]==19)&&(mess[8]==GETTM))	
+if((mess[6]==0xFF)&&(mess[7]==0xff)&&(mess[8]==MEM_KF))	
 	{ 
 	GPIOD->DDR|=(1<<7);
 	GPIOD->CR1|=(1<<7);
@@ -461,67 +552,11 @@ if((mess[6]==19)&&(mess[7]==19)&&(mess[8]==GETTM))
 	GPIOD->ODR^=(1<<7);
 	can_error_cnt=0;
 	
-	//T=tot_bat_volt;
-	
-	//max_cell_volt=s_o_c;
-	
-	//max_cell_volt=35000;
-	
-	bat_mod_dump[0][37]=((ascii2halFhex(rx_buffer[13]))<<4)+((ascii2halFhex(rx_buffer[14])));
-	bat_mod_dump[0][38]=((ascii2halFhex(rx_buffer[15]))<<4)+((ascii2halFhex(rx_buffer[16])));
-	bat_mod_dump[0][39]=((ascii2halFhex(rx_buffer[17]))<<4)+((ascii2halFhex(rx_buffer[18])));
-	bat_mod_dump[0][40]=((ascii2halFhex(rx_buffer[19]))<<4)+((ascii2halFhex(rx_buffer[20])));
-	bat_mod_dump[0][41]=rs485_cnt;
-	//ascii2hex(&bat_mod_dump[0][37],&rx_buffer[13],2);
-	//ascii2hex(&bat_mod_dump[0][38],&rx_buffer[15],2);
-	//ascii2hex(&bat_mod_dump[3][40],&rx_buffer[17],2);
-	//ascii2hex(&bat_mod_dump[4][40],&rx_buffer[19],2);
-	//bat_mod_dump[1][40]=0x12;
-	//bat_mod_dump[2][40]=0x34;
-	//bat_mod_dump[3][40]=0x56;
-	//bat_mod_dump[4][40]=0x78;
-	
-	
-	can_transmit(0x18e,bat_mod_dump[transmit_cnt_number][0],PUT_LB_TM1+transmit_cnt_number,
-	bat_mod_dump[transmit_cnt_number][1],
-	bat_mod_dump[transmit_cnt_number][2],bat_mod_dump[transmit_cnt_number][3],
-	bat_mod_dump[transmit_cnt_number][4],bat_mod_dump[transmit_cnt_number][5],
-	bat_mod_dump[transmit_cnt_number][6]);
-	can_transmit(0x18e,bat_mod_dump[transmit_cnt_number][7],PUT_LB_TM2+transmit_cnt_number,
-	bat_mod_dump[transmit_cnt_number][8],
-	bat_mod_dump[transmit_cnt_number][9],bat_mod_dump[transmit_cnt_number][10],
-	bat_mod_dump[transmit_cnt_number][11],bat_mod_dump[transmit_cnt_number][12],
-	bat_mod_dump[transmit_cnt_number][13]);
-	can_transmit(0x18e,bat_mod_dump[transmit_cnt_number][14],PUT_LB_TM3+transmit_cnt_number,
-	bat_mod_dump[transmit_cnt_number][15],
-	bat_mod_dump[transmit_cnt_number][16],bat_mod_dump[transmit_cnt_number][17],
-	bat_mod_dump[transmit_cnt_number][18],bat_mod_dump[transmit_cnt_number][19],
-	bat_mod_dump[transmit_cnt_number][20]);
-	can_transmit(0x18e,bat_mod_dump[transmit_cnt_number][21],PUT_LB_TM4+transmit_cnt_number,
-	bat_mod_dump[transmit_cnt_number][22],
-	bat_mod_dump[transmit_cnt_number][23],bat_mod_dump[transmit_cnt_number][24],
-	bat_mod_dump[transmit_cnt_number][25],bat_mod_dump[transmit_cnt_number][26],
-	bat_mod_dump[transmit_cnt_number][27]);
-	can_transmit(0x18e,bat_mod_dump[transmit_cnt_number][28],PUT_LB_TM5+transmit_cnt_number,
-	bat_mod_dump[transmit_cnt_number][29],
-	bat_mod_dump[transmit_cnt_number][30],bat_mod_dump[transmit_cnt_number][31],
-	bat_mod_dump[transmit_cnt_number][32],bat_mod_dump[transmit_cnt_number][33],
-	bat_mod_dump[transmit_cnt_number][34]);
-	can_transmit(0x18e,bat_mod_dump[transmit_cnt_number][35],PUT_LB_TM6+transmit_cnt_number,
-	bat_mod_dump[transmit_cnt_number][36],
-	bat_mod_dump[transmit_cnt_number][37],bat_mod_dump[transmit_cnt_number][38],
-	bat_mod_dump[transmit_cnt_number][39],bat_mod_dump[transmit_cnt_number][40],
-	bat_mod_dump[transmit_cnt_number][41]);
-	
-	
+	can_transmit(0x18e,MEM_KF,1,1,power_summary%256,power_summary/256,power_current%256,power_current/256,0);
+		
      link_cnt=0;
      link=ON;
 	
-	transmit_cnt_number++;
-	if(transmit_cnt_number>=7)transmit_cnt_number=0;
-     
-     	
-    	
 	}
 
 
@@ -582,7 +617,7 @@ if(++t0_cnt0>=10)
 		b1Hz=1;
 		}
 	}
-
+if(delayCnt)delayCnt--;
 			// disable break interrupt
 //GPIOA->ODR&=~(1<<4);	
 
@@ -693,33 +728,157 @@ if (tx_status & (UART1_SR_TC))
 rx_status=UART1->SR;
 rx_data=UART1->DR;
 
-if (rx_status & (UART1_SR_RXNE))
-{
-
-temp=rx_data;
-rx_buffer[rs485_rx_cnt]=rx_data;
-rs485_rx_cnt++;
-
-
-
-/*if(tx_stat==tsOFF)
+/*if(rx_data==0x0a)
 	{
-	gran(&rx_wr_index,0,RX_BUFFER_SIZE); 
-	rx_buffer[rx_wr_index]=temp;
-	
-		
-
-	rx_wr_index++;
-
+GPIOD->DDR|=(1<<5);
+GPIOD->CR1|=(1<<5);
+GPIOD->CR2&=~(1<<5);
+GPIOD->ODR^=(1<<5);	
 	}*/
+
+if ((rx_status & (UART1_SR_RXNE))&&(tx_stat!=tsON))
+	{
 	
-	//;
-	if((rx_data==0x0d)&&(rs485_rx_cnt==298))bRX485=1;
-	if((rx_data==0x0d)&&(rs485_rx_cnt==264))bRX485=2;
+	/**/
 	
-	if(rx_data==0x0d)rs485_rx_cnt=0;	
+	temp=rx_data;
+	rx_buffer[rx_wr_index1]=rx_data;
 	
-}
+	
+	if(rx_read_power_cnt_phase==1)
+		{
+		if((rx_buffer[rx_wr_index1]==0x0a)&&(rx_buffer[6]==0xc5))
+			{
+			rx_read_power_cnt_phase=2;
+			delayCnt=10;
+/*GPIOD->DDR|=(1<<5);
+	GPIOD->CR1|=(1<<5);
+	GPIOD->CR2&=~(1<<5);
+	GPIOD->ODR|=(1<<5);*/
+			}
+		}
+	else if(rx_read_power_cnt_phase==3)
+		{
+		if(/*(rx_wr_index1==6)/*&&*/
+		(rx_buffer[rx_wr_index1]==0x24)&&(rx_buffer[0]==0x81))
+			{
+			rx_read_power_cnt_phase=5;
+			delayCnt=10;
+			}
+		}
+	else if(rx_read_power_cnt_phase==4)
+		{
+		//if((rx_buffer[rx_wr_index]==0x03)&&(rx_buffer[0]==0x81))
+			{
+			rx_read_power_cnt_phase=5;
+			}
+		}
+
+	else if(rx_read_power_cnt_phase==6)
+		{
+		if(((rx_buffer[rx_wr_index1]&0x7f)=='('))
+			{
+			rx_read_power_cnt_phase=7;
+			tot_pow_buff_ptr=0;
+			tot_pow_buff[0]=0;
+			tot_pow_buff[1]=0;
+			tot_pow_buff[2]=0;
+			tot_pow_buff[3]=0;
+			tot_pow_buff[4]=0;
+			tot_pow_buff[5]=0;
+			tot_pow_buff[6]=0;
+			tot_pow_buff[7]=0;
+			tot_pow_buff[8]=0;
+			tot_pow_buff[9]=0;
+			
+			
+			
+			}
+		}	
+	else if(rx_read_power_cnt_phase==7)
+		{
+		if(((rx_buffer[rx_wr_index1]&0x7f)==')'))
+			{
+			rx_read_power_cnt_phase=8;
+			tot_pow_buff_cnt=tot_pow_buff_ptr;
+			tot_pow_buff_ready=1;
+
+			}
+		else 
+			{
+			tot_pow_buff[tot_pow_buff_ptr]=(rx_buffer[rx_wr_index1]&0x7f);
+			tot_pow_buff_ptr++;
+			}
+		}
+		
+	else if(rx_read_power_cnt_phase==8)
+		{
+		if(((rx_buffer[rx_wr_index1]&0x7f)==0x03))
+			{
+			rx_read_power_cnt_phase=9;
+			}
+		}
+	else if(rx_read_power_cnt_phase==9)
+		{
+		//if((rx_buffer[rx_wr_index]==0x03)&&(rx_buffer[0]==0x81))
+			{
+			rx_read_power_cnt_phase=10;
+			delayCnt=10;
+			}
+		}
+		
+	else if(rx_read_power_cnt_phase==11)
+		{
+		if(((rx_buffer[rx_wr_index1]&0x7f)=='('))
+			{
+			rx_read_power_cnt_phase=12;
+			curr_pow_buff_ptr=0;
+			curr_pow_buff[0]=0;
+			curr_pow_buff[1]=0;
+			curr_pow_buff[2]=0;
+			curr_pow_buff[3]=0;
+			curr_pow_buff[4]=0;
+			curr_pow_buff[5]=0;
+			curr_pow_buff[6]=0;
+			curr_pow_buff[7]=0;
+			curr_pow_buff[8]=0;
+			curr_pow_buff[9]=0;
+			
+
+			}
+		}	
+	else if(rx_read_power_cnt_phase==12)
+		{
+		if(((rx_buffer[rx_wr_index1]&0x7f)==')'))
+			{
+			rx_read_power_cnt_phase=13;
+			curr_pow_buff_cnt=curr_pow_buff_ptr;
+			curr_pow_buff_ready=1;
+			}
+		else 
+			{
+			curr_pow_buff[curr_pow_buff_ptr]=(rx_buffer[rx_wr_index1]&0x7f);
+			curr_pow_buff_ptr++;
+			}
+
+		}
+		
+	else if(rx_read_power_cnt_phase==13)
+		{
+		if(((rx_buffer[rx_wr_index1]&0x7f)==0x03))
+			{
+			rx_read_power_cnt_phase=14;
+			delayCnt=10;
+						GPIOD->DDR|=(1<<5);
+			GPIOD->CR1|=(1<<5);
+	GPIOD->CR2&=~(1<<5);
+	GPIOD->ODR&=~(1<<5);
+		GPIOD->ODR&=~(1<<5);
+			}
+		}			
+
+	rx_wr_index1++;	
+	}
 
 
 }
@@ -770,6 +929,8 @@ bat_mod_dump[4][5]=5;
 bat_mod_dump[5][5]=6;
 bat_mod_dump[6][5]=7;
 
+
+
 enableInterrupts();
 	while (1)
 	{
@@ -784,10 +945,10 @@ enableInterrupts();
 		bCAN_RX=0;
 		can_in_an();
 
-GPIOD->DDR|=(1<<7);
+/*GPIOD->DDR|=(1<<7);
 		GPIOD->CR1|=(1<<7);
 		GPIOD->CR2&=~(1<<7);	
-		GPIOD->ODR^=(1<<7);
+		GPIOD->ODR^=(1<<7);*/
 		}
 	
 
@@ -805,109 +966,165 @@ GPIOD->DDR|=(1<<7);
 	
 			
       	}
-      	
-	if(b2Hz)
-		{
-		b2Hz=0;
-		
-		if(bBAT_REQ)
-		{
-			bBAT_REQ=0;
-			
-			rs485_out_buff[0]=0x7e;
-			rs485_out_buff[1]=0x31;
-			rs485_out_buff[2]=0x31;
-			rs485_out_buff[3]=0x30;
-			rs485_out_buff[4]=0x31;
-			rs485_out_buff[5]=0x44;
-			rs485_out_buff[6]=0x30;
-			rs485_out_buff[7]=0x38;
-			rs485_out_buff[8]=0x32;
-			rs485_out_buff[9]=0x45;
-			rs485_out_buff[10]=0x30;
-			rs485_out_buff[11]=0x30;
-			rs485_out_buff[12]=0x32;
-			rs485_out_buff[13]=0x30;
-			rs485_out_buff[14]=0x31;
-			rs485_out_buff[15]=0x46;
-			rs485_out_buff[16]=0x44;
-			rs485_out_buff[17]=0x32;
-			rs485_out_buff[18]=0x37;
-			rs485_out_buff[19]=0x0d;
-			
-			uart1_out_adr(rs485_out_buff,20);
-		}
-		else
-		{
-			bBAT_REQ=1;
-			
-			rs485_out_buff[0]=0x7e;
-			rs485_out_buff[1]=0x31;
-			rs485_out_buff[2]=0x31;
-			rs485_out_buff[3]=0x30;
-			rs485_out_buff[4]=0x31;
-			rs485_out_buff[5]=0x44;
-			rs485_out_buff[6]=0x30;
-			rs485_out_buff[7]=0x38;
-			rs485_out_buff[8]=0x33;
-			rs485_out_buff[9]=0x45;
-			rs485_out_buff[10]=0x30;
-			rs485_out_buff[11]=0x30;
-			rs485_out_buff[12]=0x32;
-			rs485_out_buff[13]=0x30;
-			rs485_out_buff[14]=0x31;
-			rs485_out_buff[15]=0x46;
-			rs485_out_buff[16]=0x44;
-			rs485_out_buff[17]=0x32;
-			rs485_out_buff[18]=0x36;
-			rs485_out_buff[19]=0x0d;
-	
-			uart1_out_adr(rs485_out_buff,20);
-		}
-		}
-      	
 	if(b1Hz)
 		{
+		static _1hz_cnt;
 		b1Hz=0;
-		
-		
-		/*GPIOD->DDR|=(1<<7);
-		GPIOD->CR1|=(1<<7);
-		GPIOD->CR2&=~(1<<7);	
-		GPIOD->ODR^=(1<<7);*/
-		
-		
-		if(++rs485_cnt>=100)
+ 			
+		//if(rx_read_power_cnt_phase>20)
+		power_net_cnt++;
+		if(power_net_cnt>=5)
 			{
-			rs485_cnt=100;
-			bRS485ERR=1;
+				power_net_cnt=0;
+				rx_read_power_cnt_phase=0;
 			}
-		/*rs485_out_buff[0]=0x7e;
-		rs485_out_buff[1]=0x31;
-		rs485_out_buff[2]=0x31;
-		rs485_out_buff[3]=0x30;
-		rs485_out_buff[4]=0x31;
-		rs485_out_buff[5]=0x44;
-		rs485_out_buff[6]=0x30;
-		rs485_out_buff[7]=0x38;
-		rs485_out_buff[8]=0x32;
-		rs485_out_buff[9]=0x45;
-		rs485_out_buff[10]=0x30;
-		rs485_out_buff[11]=0x30;
-		rs485_out_buff[12]=0x32;
-		rs485_out_buff[13]=0x30;
-		rs485_out_buff[14]=0x31;
-		rs485_out_buff[15]=0x46;
-		rs485_out_buff[16]=0x44;
-		rs485_out_buff[17]=0x32;
-		rs485_out_buff[18]=0x37;
-		rs485_out_buff[19]=0x0d;
-		
-		uart1_out_adr(rs485_out_buff,20);*/
-		
+			
+		//putchar1(0x35);
+		matemath();
 
-		//plazma_cnt++;
+          }
+//AF 3F 21 8D 0A AF C5 4B D4 35 C3 C5 B1 30 B2 4D F6 30 B1 8D 0A 
+//AF 3F 21 8D 0A AF C5 4B D4 35 C3 C5 B1 30 B2 4D F6 30 B1 8D 0A
+//AF 3F 21 8D 0A AF C5 4B D4 35 C3 C5 B1 30 B2 4D F6 30 B1 8D 06 30 35 B1 8D 0A
+//AF 3F 21 8D 0A AF C5 4B D4 35 C3 C5 B1 30 B2 4D F6 30 B1 8D 06 30 35 B1 8D 0A AF 3F 21 8D 0A 
+//AF 3F 21 8D 0A 82 28 C5 D2 D2 B1 B1 A9 03 9F
+
+//AF 3F 21 8D 0A AF C5 4B D4 35 C3 C5 B1 30 B2 4D F6 30 B1 8D 0A 
+//06 30 35 B1 8D 0A 
+//81 50 30 82 28 30 B8 B8 30 30 B4 B7 B1 B2 A9 03 24 AF 3F 21 8D 0A 82 28 C5 D2 D2 B1 B1 A9 03 9F 
+
+//AF 3F 21 8D 0A 
+//AF C5 4B D4 35 C3 C5 B1 30 B2 4D F6 30 B1 8D 0A AF 3F 21 8D 0A 
+//AF 3F 21 8D 0A 
+//AF C5 4B D4 35 C3 C5 B1 30 B2 4D F6 30 B1 8D 0A 
+//06 30 35 B1 8D 0A 
+//81 50 30 82 28 30 B8 B8 30 30 B4 B7 B1 B2 A9 03 24 
+//AF 3F 21 8D 0A 
+//82 28 C5 D2 D2 B1 B1 A9 03 9F AF 3F 21 8D 0A 82 28 C5 D2 D2 B1 B1 A9 03 9F 
+
+
+//AF 3F 21 8D 0A AF C5 4B D4 35 C3 C5 B1 30 B2 4D F6 30 B1 8D 0A AF 3F 21 8D 0A AF 3F 21 8D 0A AF C5 4B D4 35 C3 C5 B1 30 B2 4D F6 30 B1 8D 0A 06 30 35 B1 8D 0A 81 50 30 82 28 30 B8 B8 30 30 B4 B7 B1 B2 A9 03 24 AF 3F 21 8D 0A 82 28 C5 D2 D2 B1 B1 A9 03 9F AF 3F 21 8D 0A 
+
+
+	if (rx_read_power_cnt_phase==0)
+		{
+		char command_with_crc[20];
+
+GPIOD->DDR|=(1<<5);
+	GPIOD->CR1|=(1<<5);
+	GPIOD->CR2&=~(1<<5);
+	GPIOD->ODR|=(1<<5);	
+
+
+		command_with_crc[0]=0xaf;  // /
+		command_with_crc[1]=0x3f;  // ?
+		command_with_crc[2]=0x21;  // !
+		command_with_crc[3]=0x8d;  // CR
+		command_with_crc[4]=0x0a;  // LF
+
+		uart1_out_adr(command_with_crc,5);
+
+		rx_wr_index1=0;
+		rx_read_power_cnt_phase=1;
+		}
+	if ((rx_read_power_cnt_phase==2)&&(!delayCnt))
+		{
+		char command_with_crc[20];
+	
+		command_with_crc[0]=0x06;  //  
+		command_with_crc[1]=0x30;  // 0
+		command_with_crc[2]=0x35;  // 5
+		command_with_crc[3]=0xb1;  // 1
+		command_with_crc[4]=0x8d;  // CR
+		command_with_crc[5]=0x0a;  // LF
+	
+		uart1_out_adr(command_with_crc,6);
+	
+		rx_wr_index1=0;
+		rx_read_power_cnt_phase=3;
+		}  
+
+/*	if (rx_read_power_cnt_phase==2)
+		{
+				char command_with_crc[20];
+
+				command_with_crc[0]=0x06;  //  
+				command_with_crc[1]=0x30;  // 0
+				command_with_crc[2]=0x35;  // 5
+				command_with_crc[3]=0xb1;  // 1
+				command_with_crc[4]=0x8d;  // CR
+				command_with_crc[5]=0x0a;  // LF
+
+				uart_out_adr1(command_with_crc,6);
+
+				rx_wr_index1=0;
+				rx_read_power_cnt_phase=3;
+		} */
+	if ((rx_read_power_cnt_phase==5)&&(!delayCnt))
+		{
+				char command_with_crc[20];
+
+				command_with_crc[0]=0x81;  //  
+				command_with_crc[1]=0xD2;  // R
+				command_with_crc[2]=0xb1;  // 1
+				command_with_crc[3]=0x82;  // 
+				command_with_crc[4]=0xC5;  // E 
+				command_with_crc[5]=0xD4;  // T
+				command_with_crc[6]=0x30;  // 0
+				command_with_crc[7]=0x50;  // P
+				command_with_crc[8]=0xC5;  // E 
+				command_with_crc[9]=0x28;  // (
+				command_with_crc[10]=0xA9;  // )
+				command_with_crc[11]=0x03;  // 
+				command_with_crc[12]=0xb7;  // bcc
+
+
+				uart1_out_adr(command_with_crc,13);
+
+				rx_wr_index1=0;
+				rx_read_power_cnt_phase=6;
 		}
 
-	}
+	if ((rx_read_power_cnt_phase==10)&&(!delayCnt))
+		{
+				char command_with_crc[20];
+
+		command_with_crc[0]=0x81;  //  
+		command_with_crc[1]=0xD2;  // R
+		command_with_crc[2]=0xb1;  // 1
+		command_with_crc[3]=0x82;  // 
+		command_with_crc[4]=0x50;  // P 
+		command_with_crc[5]=0xCF;  // O
+		command_with_crc[6]=0xd7;  // W
+		command_with_crc[7]=0xc5;  // E
+		command_with_crc[8]=0x50;  // P 
+		command_with_crc[9]=0x28;  // (
+		command_with_crc[10]=0xA9;  // )
+		command_with_crc[11]=0x03;  // 
+		command_with_crc[12]=0xe4;  // bcc
+	
+		uart1_out_adr(command_with_crc,13);
+
+				rx_wr_index1=0;
+				rx_read_power_cnt_phase=11;
+		}
+
+	if ((rx_read_power_cnt_phase==14)&&(!delayCnt))
+		{
+		char command_with_crc[20];
+
+		command_with_crc[0]=0x81;  //  
+		command_with_crc[1]=0x42;  // B
+		command_with_crc[2]=0x30;  // 0
+		command_with_crc[3]=0x03;  // 
+		command_with_crc[4]=0xf5;  // u 
+	
+		uart1_out_adr(command_with_crc,5);
+
+				rx_wr_index1=0;
+				rx_read_power_cnt_phase=20;
+
+//		ppp=3;
+		}
+	}	
 }

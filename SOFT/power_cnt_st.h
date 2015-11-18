@@ -16,22 +16,35 @@
 #define LSR_RXFE	0x80
 
 #define BUFSIZE		200
-#define RX_BUFFER_SIZE1 120
-#define TX_BUFFER_SIZE1 100
+//#define RX_BUFFER_SIZE1 120
+//#define TX_BUFFER_SIZE1 100
 
 extern const unsigned char crc8tab[256];
 extern char tx_wd_cnt;
-extern unsigned char rx_wr_index1,rx_rd_index1,rx_counter1;
-extern unsigned char tx_wr_index1,tx_rd_index1,tx_counter1;
-extern char rx_buffer1[RX_BUFFER_SIZE1];
-extern char tx_buffer1[TX_BUFFER_SIZE1];
+//extern unsigned char rx_wr_index1,rx_rd_index1,rx_counter1;
+//extern unsigned char tx_wr_index1,tx_rd_index1,tx_counter1;
+//extern char rx_buffer1[RX_BUFFER_SIZE1];
+//extern char tx_buffer1[TX_BUFFER_SIZE1];
 
 //typedef enum {tsOFF,tsON}tx_stat_enum;
 extern tx_stat_enum tx_stat;
-extern char sleep_buff[50];
-extern char sleep_in;
-extern char sleep_len;
+@near extern char sleep_buff[50];
+@near extern char sleep_in;
+@near extern char sleep_len;
 extern char rx_read_power_cnt_phase;
+
+
+//-----------------------------------------------
+//Работа со счетчиком
+extern signed long power_summary;
+extern signed short power_current;
+@near extern char tot_pow_buff[10];
+@near extern char tot_pow_buff_ptr,tot_pow_buff_cnt;
+@near extern char tot_pow_buff_ready;
+@near extern char curr_pow_buff[10];
+@near extern char curr_pow_buff_ptr,curr_pow_buff_cnt;
+@near extern char curr_pow_buff_ready;
+@near extern char ppp;
 
 //-----------------------------------------------
 void sleep_an(void);
