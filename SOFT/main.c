@@ -1,4 +1,4 @@
-//Ветка для счетчика электроэнергии
+//Ветка для счетчика электроэнергии CE102M
 
 #include "stm8s.h"
 #include "string.h"
@@ -760,10 +760,10 @@ if ((rx_status & (UART1_SR_RXNE))&&(tx_stat!=tsON))
 	else if(rx_read_power_cnt_phase==3)
 		{
 		if(/*(rx_wr_index1==6)/*&&*/
-		(rx_buffer[rx_wr_index1]==0x24)&&(rx_buffer[0]==0x81))
+		(rx_buffer[rx_wr_index1]==0x03)&&(rx_buffer[0]==0x81))
 			{
-			rx_read_power_cnt_phase=5;
-			delayCnt=10;
+			rx_read_power_cnt_phase=4;
+			
 			}
 		}
 	else if(rx_read_power_cnt_phase==4)
@@ -771,6 +771,7 @@ if ((rx_status & (UART1_SR_RXNE))&&(tx_stat!=tsON))
 		//if((rx_buffer[rx_wr_index]==0x03)&&(rx_buffer[0]==0x81))
 			{
 			rx_read_power_cnt_phase=5;
+			delayCnt=10;
 			}
 		}
 

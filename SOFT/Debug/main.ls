@@ -1489,12 +1489,12 @@
 2846                     ; 760 	else if(rx_read_power_cnt_phase==3)
 2848  0864 b600          	ld	a,_rx_read_power_cnt_phase
 2849  0866 a103          	cp	a,#3
-2850  0868 2625          	jrne	L1201
+2850  0868 2620          	jrne	L1201
 2851                     ; 762 		if(/*(rx_wr_index1==6)/*&&*/
-2851                     ; 763 		(rx_buffer[rx_wr_index1]==0x24)&&(rx_buffer[0]==0x81))
+2851                     ; 763 		(rx_buffer[rx_wr_index1]==0x03)&&(rx_buffer[0]==0x81))
 2853  086a be2d          	ldw	x,_rx_wr_index1
 2854  086c d60032        	ld	a,(_rx_buffer,x)
-2855  086f a124          	cp	a,#36
+2855  086f a103          	cp	a,#3
 2856  0871 2704          	jreq	L441
 2857  0873 acf909f9      	jpf	L7101
 2858  0877               L441:
@@ -1503,26 +1503,26 @@
 2862  087c 2704          	jreq	L641
 2863  087e acf909f9      	jpf	L7101
 2864  0882               L641:
-2865                     ; 765 			rx_read_power_cnt_phase=5;
-2867  0882 35050000      	mov	_rx_read_power_cnt_phase,#5
-2868                     ; 766 			delayCnt=10;
-2870  0886 ae000a        	ldw	x,#10
-2871  0889 bf00          	ldw	_delayCnt,x
-2872  088b acf909f9      	jpf	L7101
-2873  088f               L1201:
-2874                     ; 769 	else if(rx_read_power_cnt_phase==4)
-2876  088f b600          	ld	a,_rx_read_power_cnt_phase
-2877  0891 a104          	cp	a,#4
-2878  0893 2608          	jrne	L7201
-2879                     ; 773 			rx_read_power_cnt_phase=5;
-2881  0895 35050000      	mov	_rx_read_power_cnt_phase,#5
+2865                     ; 765 			rx_read_power_cnt_phase=4;
+2867  0882 35040000      	mov	_rx_read_power_cnt_phase,#4
+2868  0886 acf909f9      	jpf	L7101
+2869  088a               L1201:
+2870                     ; 769 	else if(rx_read_power_cnt_phase==4)
+2872  088a b600          	ld	a,_rx_read_power_cnt_phase
+2873  088c a104          	cp	a,#4
+2874  088e 260d          	jrne	L7201
+2875                     ; 773 			rx_read_power_cnt_phase=5;
+2877  0890 35050000      	mov	_rx_read_power_cnt_phase,#5
+2878                     ; 774 			delayCnt=10;
+2880  0894 ae000a        	ldw	x,#10
+2881  0897 bf00          	ldw	_delayCnt,x
 2883  0899 acf909f9      	jpf	L7101
 2884  089d               L7201:
-2885                     ; 777 	else if(rx_read_power_cnt_phase==6)
+2885                     ; 778 	else if(rx_read_power_cnt_phase==6)
 2887  089d b600          	ld	a,_rx_read_power_cnt_phase
 2888  089f a106          	cp	a,#6
 2889  08a1 2643          	jrne	L3301
-2890                     ; 779 		if(((rx_buffer[rx_wr_index1]&0x7f)=='('))
+2890                     ; 780 		if(((rx_buffer[rx_wr_index1]&0x7f)=='('))
 2892  08a3 be2d          	ldw	x,_rx_wr_index1
 2893  08a5 d60032        	ld	a,(_rx_buffer,x)
 2894  08a8 a47f          	and	a,#127
@@ -1530,51 +1530,51 @@
 2896  08ac 2704          	jreq	L051
 2897  08ae acf909f9      	jpf	L7101
 2898  08b2               L051:
-2899                     ; 781 			rx_read_power_cnt_phase=7;
+2899                     ; 782 			rx_read_power_cnt_phase=7;
 2901  08b2 35070000      	mov	_rx_read_power_cnt_phase,#7
-2902                     ; 782 			tot_pow_buff_ptr=0;
+2902                     ; 783 			tot_pow_buff_ptr=0;
 2904  08b6 725f0000      	clr	_tot_pow_buff_ptr
-2905                     ; 783 			tot_pow_buff[0]=0;
+2905                     ; 784 			tot_pow_buff[0]=0;
 2907  08ba 725f0000      	clr	_tot_pow_buff
-2908                     ; 784 			tot_pow_buff[1]=0;
+2908                     ; 785 			tot_pow_buff[1]=0;
 2910  08be 725f0001      	clr	_tot_pow_buff+1
-2911                     ; 785 			tot_pow_buff[2]=0;
+2911                     ; 786 			tot_pow_buff[2]=0;
 2913  08c2 725f0002      	clr	_tot_pow_buff+2
-2914                     ; 786 			tot_pow_buff[3]=0;
+2914                     ; 787 			tot_pow_buff[3]=0;
 2916  08c6 725f0003      	clr	_tot_pow_buff+3
-2917                     ; 787 			tot_pow_buff[4]=0;
+2917                     ; 788 			tot_pow_buff[4]=0;
 2919  08ca 725f0004      	clr	_tot_pow_buff+4
-2920                     ; 788 			tot_pow_buff[5]=0;
+2920                     ; 789 			tot_pow_buff[5]=0;
 2922  08ce 725f0005      	clr	_tot_pow_buff+5
-2923                     ; 789 			tot_pow_buff[6]=0;
+2923                     ; 790 			tot_pow_buff[6]=0;
 2925  08d2 725f0006      	clr	_tot_pow_buff+6
-2926                     ; 790 			tot_pow_buff[7]=0;
+2926                     ; 791 			tot_pow_buff[7]=0;
 2928  08d6 725f0007      	clr	_tot_pow_buff+7
-2929                     ; 791 			tot_pow_buff[8]=0;
+2929                     ; 792 			tot_pow_buff[8]=0;
 2931  08da 725f0008      	clr	_tot_pow_buff+8
-2932                     ; 792 			tot_pow_buff[9]=0;
+2932                     ; 793 			tot_pow_buff[9]=0;
 2934  08de 725f0009      	clr	_tot_pow_buff+9
 2935  08e2 acf909f9      	jpf	L7101
 2936  08e6               L3301:
-2937                     ; 798 	else if(rx_read_power_cnt_phase==7)
+2937                     ; 799 	else if(rx_read_power_cnt_phase==7)
 2939  08e6 b600          	ld	a,_rx_read_power_cnt_phase
 2940  08e8 a107          	cp	a,#7
 2941  08ea 2635          	jrne	L1401
-2942                     ; 800 		if(((rx_buffer[rx_wr_index1]&0x7f)==')'))
+2942                     ; 801 		if(((rx_buffer[rx_wr_index1]&0x7f)==')'))
 2944  08ec be2d          	ldw	x,_rx_wr_index1
 2945  08ee d60032        	ld	a,(_rx_buffer,x)
 2946  08f1 a47f          	and	a,#127
 2947  08f3 a129          	cp	a,#41
 2948  08f5 2611          	jrne	L3401
-2949                     ; 802 			rx_read_power_cnt_phase=8;
+2949                     ; 803 			rx_read_power_cnt_phase=8;
 2951  08f7 35080000      	mov	_rx_read_power_cnt_phase,#8
-2952                     ; 803 			tot_pow_buff_cnt=tot_pow_buff_ptr;
+2952                     ; 804 			tot_pow_buff_cnt=tot_pow_buff_ptr;
 2954  08fb 5500000000    	mov	_tot_pow_buff_cnt,_tot_pow_buff_ptr
-2955                     ; 804 			tot_pow_buff_ready=1;
+2955                     ; 805 			tot_pow_buff_ready=1;
 2957  0900 35010000      	mov	_tot_pow_buff_ready,#1
 2959  0904 acf909f9      	jpf	L7101
 2960  0908               L3401:
-2961                     ; 809 			tot_pow_buff[tot_pow_buff_ptr]=(rx_buffer[rx_wr_index1]&0x7f);
+2961                     ; 810 			tot_pow_buff[tot_pow_buff_ptr]=(rx_buffer[rx_wr_index1]&0x7f);
 2963  0908 c60000        	ld	a,_tot_pow_buff_ptr
 2964  090b 5f            	clrw	x
 2965  090c 97            	ld	xl,a
@@ -1582,15 +1582,15 @@
 2967  0910 90d60032      	ld	a,(_rx_buffer,y)
 2968  0914 a47f          	and	a,#127
 2969  0916 d70000        	ld	(_tot_pow_buff,x),a
-2970                     ; 810 			tot_pow_buff_ptr++;
+2970                     ; 811 			tot_pow_buff_ptr++;
 2972  0919 725c0000      	inc	_tot_pow_buff_ptr
 2973  091d acf909f9      	jpf	L7101
 2974  0921               L1401:
-2975                     ; 814 	else if(rx_read_power_cnt_phase==8)
+2975                     ; 815 	else if(rx_read_power_cnt_phase==8)
 2977  0921 b600          	ld	a,_rx_read_power_cnt_phase
 2978  0923 a108          	cp	a,#8
 2979  0925 2617          	jrne	L1501
-2980                     ; 816 		if(((rx_buffer[rx_wr_index1]&0x7f)==0x03))
+2980                     ; 817 		if(((rx_buffer[rx_wr_index1]&0x7f)==0x03))
 2982  0927 be2d          	ldw	x,_rx_wr_index1
 2983  0929 d60032        	ld	a,(_rx_buffer,x)
 2984  092c a47f          	and	a,#127
@@ -1598,76 +1598,76 @@
 2986  0930 2704          	jreq	L251
 2987  0932 acf909f9      	jpf	L7101
 2988  0936               L251:
-2989                     ; 818 			rx_read_power_cnt_phase=9;
+2989                     ; 819 			rx_read_power_cnt_phase=9;
 2991  0936 35090000      	mov	_rx_read_power_cnt_phase,#9
 2992  093a acf909f9      	jpf	L7101
 2993  093e               L1501:
-2994                     ; 821 	else if(rx_read_power_cnt_phase==9)
+2994                     ; 822 	else if(rx_read_power_cnt_phase==9)
 2996  093e b600          	ld	a,_rx_read_power_cnt_phase
 2997  0940 a109          	cp	a,#9
 2998  0942 260d          	jrne	L7501
-2999                     ; 825 			rx_read_power_cnt_phase=10;
+2999                     ; 826 			rx_read_power_cnt_phase=10;
 3001  0944 350a0000      	mov	_rx_read_power_cnt_phase,#10
-3002                     ; 826 			delayCnt=10;
+3002                     ; 827 			delayCnt=10;
 3004  0948 ae000a        	ldw	x,#10
 3005  094b bf00          	ldw	_delayCnt,x
 3007  094d acf909f9      	jpf	L7101
 3008  0951               L7501:
-3009                     ; 830 	else if(rx_read_power_cnt_phase==11)
+3009                     ; 831 	else if(rx_read_power_cnt_phase==11)
 3011  0951 b600          	ld	a,_rx_read_power_cnt_phase
 3012  0953 a10b          	cp	a,#11
 3013  0955 263d          	jrne	L3601
-3014                     ; 832 		if(((rx_buffer[rx_wr_index1]&0x7f)=='('))
+3014                     ; 833 		if(((rx_buffer[rx_wr_index1]&0x7f)=='('))
 3016  0957 be2d          	ldw	x,_rx_wr_index1
 3017  0959 d60032        	ld	a,(_rx_buffer,x)
 3018  095c a47f          	and	a,#127
 3019  095e a128          	cp	a,#40
 3020  0960 26eb          	jrne	L7101
-3021                     ; 834 			rx_read_power_cnt_phase=12;
+3021                     ; 835 			rx_read_power_cnt_phase=12;
 3023  0962 350c0000      	mov	_rx_read_power_cnt_phase,#12
-3024                     ; 835 			curr_pow_buff_ptr=0;
+3024                     ; 836 			curr_pow_buff_ptr=0;
 3026  0966 725f0000      	clr	_curr_pow_buff_ptr
-3027                     ; 836 			curr_pow_buff[0]=0;
+3027                     ; 837 			curr_pow_buff[0]=0;
 3029  096a 725f0000      	clr	_curr_pow_buff
-3030                     ; 837 			curr_pow_buff[1]=0;
+3030                     ; 838 			curr_pow_buff[1]=0;
 3032  096e 725f0001      	clr	_curr_pow_buff+1
-3033                     ; 838 			curr_pow_buff[2]=0;
+3033                     ; 839 			curr_pow_buff[2]=0;
 3035  0972 725f0002      	clr	_curr_pow_buff+2
-3036                     ; 839 			curr_pow_buff[3]=0;
+3036                     ; 840 			curr_pow_buff[3]=0;
 3038  0976 725f0003      	clr	_curr_pow_buff+3
-3039                     ; 840 			curr_pow_buff[4]=0;
+3039                     ; 841 			curr_pow_buff[4]=0;
 3041  097a 725f0004      	clr	_curr_pow_buff+4
-3042                     ; 841 			curr_pow_buff[5]=0;
+3042                     ; 842 			curr_pow_buff[5]=0;
 3044  097e 725f0005      	clr	_curr_pow_buff+5
-3045                     ; 842 			curr_pow_buff[6]=0;
+3045                     ; 843 			curr_pow_buff[6]=0;
 3047  0982 725f0006      	clr	_curr_pow_buff+6
-3048                     ; 843 			curr_pow_buff[7]=0;
+3048                     ; 844 			curr_pow_buff[7]=0;
 3050  0986 725f0007      	clr	_curr_pow_buff+7
-3051                     ; 844 			curr_pow_buff[8]=0;
+3051                     ; 845 			curr_pow_buff[8]=0;
 3053  098a 725f0008      	clr	_curr_pow_buff+8
-3054                     ; 845 			curr_pow_buff[9]=0;
+3054                     ; 846 			curr_pow_buff[9]=0;
 3056  098e 725f0009      	clr	_curr_pow_buff+9
 3057  0992 2065          	jra	L7101
 3058  0994               L3601:
-3059                     ; 850 	else if(rx_read_power_cnt_phase==12)
+3059                     ; 851 	else if(rx_read_power_cnt_phase==12)
 3061  0994 b600          	ld	a,_rx_read_power_cnt_phase
 3062  0996 a10c          	cp	a,#12
 3063  0998 2631          	jrne	L1701
-3064                     ; 852 		if(((rx_buffer[rx_wr_index1]&0x7f)==')'))
+3064                     ; 853 		if(((rx_buffer[rx_wr_index1]&0x7f)==')'))
 3066  099a be2d          	ldw	x,_rx_wr_index1
 3067  099c d60032        	ld	a,(_rx_buffer,x)
 3068  099f a47f          	and	a,#127
 3069  09a1 a129          	cp	a,#41
 3070  09a3 260f          	jrne	L3701
-3071                     ; 854 			rx_read_power_cnt_phase=13;
+3071                     ; 855 			rx_read_power_cnt_phase=13;
 3073  09a5 350d0000      	mov	_rx_read_power_cnt_phase,#13
-3074                     ; 855 			curr_pow_buff_cnt=curr_pow_buff_ptr;
+3074                     ; 856 			curr_pow_buff_cnt=curr_pow_buff_ptr;
 3076  09a9 5500000000    	mov	_curr_pow_buff_cnt,_curr_pow_buff_ptr
-3077                     ; 856 			curr_pow_buff_ready=1;
+3077                     ; 857 			curr_pow_buff_ready=1;
 3079  09ae 35010000      	mov	_curr_pow_buff_ready,#1
 3081  09b2 2045          	jra	L7101
 3082  09b4               L3701:
-3083                     ; 860 			curr_pow_buff[curr_pow_buff_ptr]=(rx_buffer[rx_wr_index1]&0x7f);
+3083                     ; 861 			curr_pow_buff[curr_pow_buff_ptr]=(rx_buffer[rx_wr_index1]&0x7f);
 3085  09b4 c60000        	ld	a,_curr_pow_buff_ptr
 3086  09b7 5f            	clrw	x
 3087  09b8 97            	ld	xl,a
@@ -1675,334 +1675,334 @@
 3089  09bc 90d60032      	ld	a,(_rx_buffer,y)
 3090  09c0 a47f          	and	a,#127
 3091  09c2 d70000        	ld	(_curr_pow_buff,x),a
-3092                     ; 861 			curr_pow_buff_ptr++;
+3092                     ; 862 			curr_pow_buff_ptr++;
 3094  09c5 725c0000      	inc	_curr_pow_buff_ptr
 3095  09c9 202e          	jra	L7101
 3096  09cb               L1701:
-3097                     ; 866 	else if(rx_read_power_cnt_phase==13)
+3097                     ; 867 	else if(rx_read_power_cnt_phase==13)
 3099  09cb b600          	ld	a,_rx_read_power_cnt_phase
 3100  09cd a10d          	cp	a,#13
 3101  09cf 2628          	jrne	L7101
-3102                     ; 868 		if(((rx_buffer[rx_wr_index1]&0x7f)==0x03))
+3102                     ; 869 		if(((rx_buffer[rx_wr_index1]&0x7f)==0x03))
 3104  09d1 be2d          	ldw	x,_rx_wr_index1
 3105  09d3 d60032        	ld	a,(_rx_buffer,x)
 3106  09d6 a47f          	and	a,#127
 3107  09d8 a103          	cp	a,#3
 3108  09da 261d          	jrne	L7101
-3109                     ; 870 			rx_read_power_cnt_phase=14;
+3109                     ; 871 			rx_read_power_cnt_phase=14;
 3111  09dc 350e0000      	mov	_rx_read_power_cnt_phase,#14
-3112                     ; 871 			delayCnt=10;
+3112                     ; 872 			delayCnt=10;
 3114  09e0 ae000a        	ldw	x,#10
 3115  09e3 bf00          	ldw	_delayCnt,x
-3116                     ; 872 						GPIOD->DDR|=(1<<5);
+3116                     ; 873 						GPIOD->DDR|=(1<<5);
 3118  09e5 721a5011      	bset	20497,#5
-3119                     ; 873 			GPIOD->CR1|=(1<<5);
+3119                     ; 874 			GPIOD->CR1|=(1<<5);
 3121  09e9 721a5012      	bset	20498,#5
-3122                     ; 874 	GPIOD->CR2&=~(1<<5);
+3122                     ; 875 	GPIOD->CR2&=~(1<<5);
 3124  09ed 721b5013      	bres	20499,#5
-3125                     ; 875 	GPIOD->ODR&=~(1<<5);
+3125                     ; 876 	GPIOD->ODR&=~(1<<5);
 3127  09f1 721b500f      	bres	20495,#5
-3128                     ; 876 		GPIOD->ODR&=~(1<<5);
+3128                     ; 877 		GPIOD->ODR&=~(1<<5);
 3130  09f5 721b500f      	bres	20495,#5
 3131  09f9               L7101:
-3132                     ; 880 	rx_wr_index1++;	
+3132                     ; 881 	rx_wr_index1++;	
 3134  09f9 be2d          	ldw	x,_rx_wr_index1
 3135  09fb 1c0001        	addw	x,#1
 3136  09fe bf2d          	ldw	_rx_wr_index1,x
 3137  0a00               L1101:
-3138                     ; 884 }
+3138                     ; 885 }
 3141  0a00 5b03          	addw	sp,#3
 3142  0a02 80            	iret
-3236                     ; 893 main()
-3236                     ; 894 {
+3236                     ; 894 main()
+3236                     ; 895 {
 3238                     	switch	.text
 3239  0a03               _main:
 3241  0a03 5214          	subw	sp,#20
 3242       00000014      OFST:	set	20
-3245                     ; 895 CLK->ECKR|=1;
+3245                     ; 896 CLK->ECKR|=1;
 3247  0a05 721050c1      	bset	20673,#0
 3249  0a09               L7411:
-3250                     ; 896 while((CLK->ECKR & 2) == 0);
+3250                     ; 897 while((CLK->ECKR & 2) == 0);
 3252  0a09 c650c1        	ld	a,20673
 3253  0a0c a502          	bcp	a,#2
 3254  0a0e 27f9          	jreq	L7411
-3255                     ; 897 CLK->SWCR|=2;
+3255                     ; 898 CLK->SWCR|=2;
 3257  0a10 721250c5      	bset	20677,#1
-3258                     ; 898 CLK->SWR=0xB4;
+3258                     ; 899 CLK->SWR=0xB4;
 3260  0a14 35b450c4      	mov	20676,#180
-3261                     ; 901 t4_init();
+3261                     ; 902 t4_init();
 3263  0a18 cd072a        	call	_t4_init
-3265                     ; 903 		GPIOG->DDR|=(1<<0);
+3265                     ; 904 		GPIOG->DDR|=(1<<0);
 3267  0a1b 72105020      	bset	20512,#0
-3268                     ; 904 		GPIOG->CR1|=(1<<0);
+3268                     ; 905 		GPIOG->CR1|=(1<<0);
 3270  0a1f 72105021      	bset	20513,#0
-3271                     ; 905 		GPIOG->CR2&=~(1<<0);	
+3271                     ; 906 		GPIOG->CR2&=~(1<<0);	
 3273  0a23 72115022      	bres	20514,#0
-3274                     ; 908 		GPIOG->DDR&=~(1<<1);
+3274                     ; 909 		GPIOG->DDR&=~(1<<1);
 3276  0a27 72135020      	bres	20512,#1
-3277                     ; 909 		GPIOG->CR1|=(1<<1);
+3277                     ; 910 		GPIOG->CR1|=(1<<1);
 3279  0a2b 72125021      	bset	20513,#1
-3280                     ; 910 		GPIOG->CR2&=~(1<<1);
+3280                     ; 911 		GPIOG->CR2&=~(1<<1);
 3282  0a2f 72135022      	bres	20514,#1
-3283                     ; 912 init_CAN();
+3283                     ; 913 init_CAN();
 3285  0a33 cd0568        	call	_init_CAN
-3287                     ; 920 uart1_init();
+3287                     ; 921 uart1_init();
 3289  0a36 cd0213        	call	_uart1_init
-3291                     ; 922 adress=19;
+3291                     ; 923 adress=19;
 3293  0a39 35130119      	mov	_adress,#19
-3294                     ; 924 bat_mod_dump[0][5]=1;
+3294                     ; 925 bat_mod_dump[0][5]=1;
 3296  0a3d 35010005      	mov	_bat_mod_dump+5,#1
-3297                     ; 925 bat_mod_dump[1][5]=2;
+3297                     ; 926 bat_mod_dump[1][5]=2;
 3299  0a41 3502002d      	mov	_bat_mod_dump+45,#2
-3300                     ; 926 bat_mod_dump[2][5]=3;
+3300                     ; 927 bat_mod_dump[2][5]=3;
 3302  0a45 35030055      	mov	_bat_mod_dump+85,#3
-3303                     ; 927 bat_mod_dump[3][5]=4;
+3303                     ; 928 bat_mod_dump[3][5]=4;
 3305  0a49 3504007d      	mov	_bat_mod_dump+125,#4
-3306                     ; 928 bat_mod_dump[4][5]=5;
+3306                     ; 929 bat_mod_dump[4][5]=5;
 3308  0a4d 350500a5      	mov	_bat_mod_dump+165,#5
-3309                     ; 929 bat_mod_dump[5][5]=6;
+3309                     ; 930 bat_mod_dump[5][5]=6;
 3311  0a51 350600cd      	mov	_bat_mod_dump+205,#6
-3312                     ; 930 bat_mod_dump[6][5]=7;
+3312                     ; 931 bat_mod_dump[6][5]=7;
 3314  0a55 350700f5      	mov	_bat_mod_dump+245,#7
-3315                     ; 934 enableInterrupts();
+3315                     ; 935 enableInterrupts();
 3318  0a59 9a            rim
 3320  0a5a               L3511:
-3321                     ; 938 	if(bRX485)
+3321                     ; 939 	if(bRX485)
 3323  0a5a 3d03          	tnz	_bRX485
 3324  0a5c 2703          	jreq	L7511
-3325                     ; 940 		rx485_in_an();
+3325                     ; 941 		rx485_in_an();
 3327  0a5e cd0473        	call	_rx485_in_an
 3329  0a61               L7511:
-3330                     ; 943 	if(bCAN_RX)
+3330                     ; 944 	if(bCAN_RX)
 3332  0a61 3d08          	tnz	_bCAN_RX
 3333  0a63 2705          	jreq	L1611
-3334                     ; 945 		bCAN_RX=0;
+3334                     ; 946 		bCAN_RX=0;
 3336  0a65 3f08          	clr	_bCAN_RX
-3337                     ; 946 		can_in_an();
+3337                     ; 947 		can_in_an();
 3339  0a67 cd06b4        	call	_can_in_an
 3341  0a6a               L1611:
-3342                     ; 955 	if(b100Hz)
+3342                     ; 956 	if(b100Hz)
 3344                     	btst	_b100Hz
 3345  0a6f 2404          	jruge	L3611
-3346                     ; 957 		b100Hz=0;
+3346                     ; 958 		b100Hz=0;
 3348  0a71 72110006      	bres	_b100Hz
 3349  0a75               L3611:
-3350                     ; 960 	if(b10Hz)
+3350                     ; 961 	if(b10Hz)
 3352                     	btst	_b10Hz
 3353  0a7a 2407          	jruge	L5611
-3354                     ; 962 		b10Hz=0;
+3354                     ; 963 		b10Hz=0;
 3356  0a7c 72110005      	bres	_b10Hz
-3357                     ; 964 			can_tx_hndl();
+3357                     ; 965 			can_tx_hndl();
 3359  0a80 cd064d        	call	_can_tx_hndl
 3361  0a83               L5611:
-3362                     ; 969 	if(b1Hz)
+3362                     ; 970 	if(b1Hz)
 3364                     	btst	_b1Hz
 3365  0a88 2413          	jruge	L7611
-3366                     ; 972 		b1Hz=0;
+3366                     ; 973 		b1Hz=0;
 3368  0a8a 72110002      	bres	_b1Hz
-3369                     ; 975 		power_net_cnt++;
+3369                     ; 976 		power_net_cnt++;
 3371  0a8e 3c0b          	inc	_power_net_cnt
-3372                     ; 976 		if(power_net_cnt>=5)
+3372                     ; 977 		if(power_net_cnt>=5)
 3374  0a90 b60b          	ld	a,_power_net_cnt
 3375  0a92 a105          	cp	a,#5
 3376  0a94 2504          	jrult	L1711
-3377                     ; 978 				power_net_cnt=0;
+3377                     ; 979 				power_net_cnt=0;
 3379  0a96 3f0b          	clr	_power_net_cnt
-3380                     ; 979 				rx_read_power_cnt_phase=0;
+3380                     ; 980 				rx_read_power_cnt_phase=0;
 3382  0a98 3f00          	clr	_rx_read_power_cnt_phase
 3383  0a9a               L1711:
-3384                     ; 983 		matemath();
+3384                     ; 984 		matemath();
 3386  0a9a cd003c        	call	_matemath
 3388  0a9d               L7611:
-3389                     ; 1009 	if (rx_read_power_cnt_phase==0)
+3389                     ; 1010 	if (rx_read_power_cnt_phase==0)
 3391  0a9d 3d00          	tnz	_rx_read_power_cnt_phase
 3392  0a9f 2635          	jrne	L3711
-3393                     ; 1013 GPIOD->DDR|=(1<<5);
+3393                     ; 1014 GPIOD->DDR|=(1<<5);
 3395  0aa1 721a5011      	bset	20497,#5
-3396                     ; 1014 	GPIOD->CR1|=(1<<5);
+3396                     ; 1015 	GPIOD->CR1|=(1<<5);
 3398  0aa5 721a5012      	bset	20498,#5
-3399                     ; 1015 	GPIOD->CR2&=~(1<<5);
+3399                     ; 1016 	GPIOD->CR2&=~(1<<5);
 3401  0aa9 721b5013      	bres	20499,#5
-3402                     ; 1016 	GPIOD->ODR|=(1<<5);	
+3402                     ; 1017 	GPIOD->ODR|=(1<<5);	
 3404  0aad 721a500f      	bset	20495,#5
-3405                     ; 1019 		command_with_crc[0]=0xaf;  // /
+3405                     ; 1020 		command_with_crc[0]=0xaf;  // /
 3407  0ab1 a6af          	ld	a,#175
 3408  0ab3 6b01          	ld	(OFST-19,sp),a
-3409                     ; 1020 		command_with_crc[1]=0x3f;  // ?
+3409                     ; 1021 		command_with_crc[1]=0x3f;  // ?
 3411  0ab5 a63f          	ld	a,#63
 3412  0ab7 6b02          	ld	(OFST-18,sp),a
-3413                     ; 1021 		command_with_crc[2]=0x21;  // !
+3413                     ; 1022 		command_with_crc[2]=0x21;  // !
 3415  0ab9 a621          	ld	a,#33
 3416  0abb 6b03          	ld	(OFST-17,sp),a
-3417                     ; 1022 		command_with_crc[3]=0x8d;  // CR
+3417                     ; 1023 		command_with_crc[3]=0x8d;  // CR
 3419  0abd a68d          	ld	a,#141
 3420  0abf 6b04          	ld	(OFST-16,sp),a
-3421                     ; 1023 		command_with_crc[4]=0x0a;  // LF
+3421                     ; 1024 		command_with_crc[4]=0x0a;  // LF
 3423  0ac1 a60a          	ld	a,#10
 3424  0ac3 6b05          	ld	(OFST-15,sp),a
-3425                     ; 1025 		uart1_out_adr(command_with_crc,5);
+3425                     ; 1026 		uart1_out_adr(command_with_crc,5);
 3427  0ac5 4b05          	push	#5
 3428  0ac7 96            	ldw	x,sp
 3429  0ac8 1c0002        	addw	x,#OFST-18
 3430  0acb cd029a        	call	_uart1_out_adr
 3432  0ace 84            	pop	a
-3433                     ; 1027 		rx_wr_index1=0;
+3433                     ; 1028 		rx_wr_index1=0;
 3435  0acf 5f            	clrw	x
 3436  0ad0 bf2d          	ldw	_rx_wr_index1,x
-3437                     ; 1028 		rx_read_power_cnt_phase=1;
+3437                     ; 1029 		rx_read_power_cnt_phase=1;
 3439  0ad2 35010000      	mov	_rx_read_power_cnt_phase,#1
 3440  0ad6               L3711:
-3441                     ; 1030 	if ((rx_read_power_cnt_phase==2)&&(!delayCnt))
+3441                     ; 1031 	if ((rx_read_power_cnt_phase==2)&&(!delayCnt))
 3443  0ad6 b600          	ld	a,_rx_read_power_cnt_phase
 3444  0ad8 a102          	cp	a,#2
 3445  0ada 262d          	jrne	L5711
 3447  0adc be00          	ldw	x,_delayCnt
 3448  0ade 2629          	jrne	L5711
-3449                     ; 1034 		command_with_crc[0]=0x06;  //  
+3449                     ; 1035 		command_with_crc[0]=0x06;  //  
 3451  0ae0 a606          	ld	a,#6
 3452  0ae2 6b01          	ld	(OFST-19,sp),a
-3453                     ; 1035 		command_with_crc[1]=0x30;  // 0
+3453                     ; 1036 		command_with_crc[1]=0x30;  // 0
 3455  0ae4 a630          	ld	a,#48
 3456  0ae6 6b02          	ld	(OFST-18,sp),a
-3457                     ; 1036 		command_with_crc[2]=0x35;  // 5
+3457                     ; 1037 		command_with_crc[2]=0x35;  // 5
 3459  0ae8 a635          	ld	a,#53
 3460  0aea 6b03          	ld	(OFST-17,sp),a
-3461                     ; 1037 		command_with_crc[3]=0xb1;  // 1
+3461                     ; 1038 		command_with_crc[3]=0xb1;  // 1
 3463  0aec a6b1          	ld	a,#177
 3464  0aee 6b04          	ld	(OFST-16,sp),a
-3465                     ; 1038 		command_with_crc[4]=0x8d;  // CR
+3465                     ; 1039 		command_with_crc[4]=0x8d;  // CR
 3467  0af0 a68d          	ld	a,#141
 3468  0af2 6b05          	ld	(OFST-15,sp),a
-3469                     ; 1039 		command_with_crc[5]=0x0a;  // LF
+3469                     ; 1040 		command_with_crc[5]=0x0a;  // LF
 3471  0af4 a60a          	ld	a,#10
 3472  0af6 6b06          	ld	(OFST-14,sp),a
-3473                     ; 1041 		uart1_out_adr(command_with_crc,6);
+3473                     ; 1042 		uart1_out_adr(command_with_crc,6);
 3475  0af8 4b06          	push	#6
 3476  0afa 96            	ldw	x,sp
 3477  0afb 1c0002        	addw	x,#OFST-18
 3478  0afe cd029a        	call	_uart1_out_adr
 3480  0b01 84            	pop	a
-3481                     ; 1043 		rx_wr_index1=0;
+3481                     ; 1044 		rx_wr_index1=0;
 3483  0b02 5f            	clrw	x
 3484  0b03 bf2d          	ldw	_rx_wr_index1,x
-3485                     ; 1044 		rx_read_power_cnt_phase=3;
+3485                     ; 1045 		rx_read_power_cnt_phase=3;
 3487  0b05 35030000      	mov	_rx_read_power_cnt_phase,#3
 3488  0b09               L5711:
-3489                     ; 1063 	if ((rx_read_power_cnt_phase==5)&&(!delayCnt))
+3489                     ; 1064 	if ((rx_read_power_cnt_phase==5)&&(!delayCnt))
 3491  0b09 b600          	ld	a,_rx_read_power_cnt_phase
 3492  0b0b a105          	cp	a,#5
 3493  0b0d 2649          	jrne	L7711
 3495  0b0f be00          	ldw	x,_delayCnt
 3496  0b11 2645          	jrne	L7711
-3497                     ; 1067 				command_with_crc[0]=0x81;  //  
+3497                     ; 1068 				command_with_crc[0]=0x81;  //  
 3499  0b13 a681          	ld	a,#129
 3500  0b15 6b01          	ld	(OFST-19,sp),a
-3501                     ; 1068 				command_with_crc[1]=0xD2;  // R
+3501                     ; 1069 				command_with_crc[1]=0xD2;  // R
 3503  0b17 a6d2          	ld	a,#210
 3504  0b19 6b02          	ld	(OFST-18,sp),a
-3505                     ; 1069 				command_with_crc[2]=0xb1;  // 1
+3505                     ; 1070 				command_with_crc[2]=0xb1;  // 1
 3507  0b1b a6b1          	ld	a,#177
 3508  0b1d 6b03          	ld	(OFST-17,sp),a
-3509                     ; 1070 				command_with_crc[3]=0x82;  // 
+3509                     ; 1071 				command_with_crc[3]=0x82;  // 
 3511  0b1f a682          	ld	a,#130
 3512  0b21 6b04          	ld	(OFST-16,sp),a
-3513                     ; 1071 				command_with_crc[4]=0xC5;  // E 
+3513                     ; 1072 				command_with_crc[4]=0xC5;  // E 
 3515  0b23 a6c5          	ld	a,#197
 3516  0b25 6b05          	ld	(OFST-15,sp),a
-3517                     ; 1072 				command_with_crc[5]=0xD4;  // T
+3517                     ; 1073 				command_with_crc[5]=0xD4;  // T
 3519  0b27 a6d4          	ld	a,#212
 3520  0b29 6b06          	ld	(OFST-14,sp),a
-3521                     ; 1073 				command_with_crc[6]=0x30;  // 0
+3521                     ; 1074 				command_with_crc[6]=0x30;  // 0
 3523  0b2b a630          	ld	a,#48
 3524  0b2d 6b07          	ld	(OFST-13,sp),a
-3525                     ; 1074 				command_with_crc[7]=0x50;  // P
+3525                     ; 1075 				command_with_crc[7]=0x50;  // P
 3527  0b2f a650          	ld	a,#80
 3528  0b31 6b08          	ld	(OFST-12,sp),a
-3529                     ; 1075 				command_with_crc[8]=0xC5;  // E 
+3529                     ; 1076 				command_with_crc[8]=0xC5;  // E 
 3531  0b33 a6c5          	ld	a,#197
 3532  0b35 6b09          	ld	(OFST-11,sp),a
-3533                     ; 1076 				command_with_crc[9]=0x28;  // (
+3533                     ; 1077 				command_with_crc[9]=0x28;  // (
 3535  0b37 a628          	ld	a,#40
 3536  0b39 6b0a          	ld	(OFST-10,sp),a
-3537                     ; 1077 				command_with_crc[10]=0xA9;  // )
+3537                     ; 1078 				command_with_crc[10]=0xA9;  // )
 3539  0b3b a6a9          	ld	a,#169
 3540  0b3d 6b0b          	ld	(OFST-9,sp),a
-3541                     ; 1078 				command_with_crc[11]=0x03;  // 
+3541                     ; 1079 				command_with_crc[11]=0x03;  // 
 3543  0b3f a603          	ld	a,#3
 3544  0b41 6b0c          	ld	(OFST-8,sp),a
-3545                     ; 1079 				command_with_crc[12]=0xb7;  // bcc
+3545                     ; 1080 				command_with_crc[12]=0xb7;  // bcc
 3547  0b43 a6b7          	ld	a,#183
 3548  0b45 6b0d          	ld	(OFST-7,sp),a
-3549                     ; 1082 				uart1_out_adr(command_with_crc,13);
+3549                     ; 1083 				uart1_out_adr(command_with_crc,13);
 3551  0b47 4b0d          	push	#13
 3552  0b49 96            	ldw	x,sp
 3553  0b4a 1c0002        	addw	x,#OFST-18
 3554  0b4d cd029a        	call	_uart1_out_adr
 3556  0b50 84            	pop	a
-3557                     ; 1084 				rx_wr_index1=0;
+3557                     ; 1085 				rx_wr_index1=0;
 3559  0b51 5f            	clrw	x
 3560  0b52 bf2d          	ldw	_rx_wr_index1,x
-3561                     ; 1085 				rx_read_power_cnt_phase=6;
+3561                     ; 1086 				rx_read_power_cnt_phase=6;
 3563  0b54 35060000      	mov	_rx_read_power_cnt_phase,#6
 3564  0b58               L7711:
-3565                     ; 1088 	if ((rx_read_power_cnt_phase==10)&&(!delayCnt))
+3565                     ; 1089 	if ((rx_read_power_cnt_phase==10)&&(!delayCnt))
 3567  0b58 b600          	ld	a,_rx_read_power_cnt_phase
 3568  0b5a a10a          	cp	a,#10
 3569  0b5c 2649          	jrne	L1021
 3571  0b5e be00          	ldw	x,_delayCnt
 3572  0b60 2645          	jrne	L1021
-3573                     ; 1092 		command_with_crc[0]=0x81;  //  
+3573                     ; 1093 		command_with_crc[0]=0x81;  //  
 3575  0b62 a681          	ld	a,#129
 3576  0b64 6b01          	ld	(OFST-19,sp),a
-3577                     ; 1093 		command_with_crc[1]=0xD2;  // R
+3577                     ; 1094 		command_with_crc[1]=0xD2;  // R
 3579  0b66 a6d2          	ld	a,#210
 3580  0b68 6b02          	ld	(OFST-18,sp),a
-3581                     ; 1094 		command_with_crc[2]=0xb1;  // 1
+3581                     ; 1095 		command_with_crc[2]=0xb1;  // 1
 3583  0b6a a6b1          	ld	a,#177
 3584  0b6c 6b03          	ld	(OFST-17,sp),a
-3585                     ; 1095 		command_with_crc[3]=0x82;  // 
+3585                     ; 1096 		command_with_crc[3]=0x82;  // 
 3587  0b6e a682          	ld	a,#130
 3588  0b70 6b04          	ld	(OFST-16,sp),a
-3589                     ; 1096 		command_with_crc[4]=0x50;  // P 
+3589                     ; 1097 		command_with_crc[4]=0x50;  // P 
 3591  0b72 a650          	ld	a,#80
 3592  0b74 6b05          	ld	(OFST-15,sp),a
-3593                     ; 1097 		command_with_crc[5]=0xCF;  // O
+3593                     ; 1098 		command_with_crc[5]=0xCF;  // O
 3595  0b76 a6cf          	ld	a,#207
 3596  0b78 6b06          	ld	(OFST-14,sp),a
-3597                     ; 1098 		command_with_crc[6]=0xd7;  // W
+3597                     ; 1099 		command_with_crc[6]=0xd7;  // W
 3599  0b7a a6d7          	ld	a,#215
 3600  0b7c 6b07          	ld	(OFST-13,sp),a
-3601                     ; 1099 		command_with_crc[7]=0xc5;  // E
+3601                     ; 1100 		command_with_crc[7]=0xc5;  // E
 3603  0b7e a6c5          	ld	a,#197
 3604  0b80 6b08          	ld	(OFST-12,sp),a
-3605                     ; 1100 		command_with_crc[8]=0x50;  // P 
+3605                     ; 1101 		command_with_crc[8]=0x50;  // P 
 3607  0b82 a650          	ld	a,#80
 3608  0b84 6b09          	ld	(OFST-11,sp),a
-3609                     ; 1101 		command_with_crc[9]=0x28;  // (
+3609                     ; 1102 		command_with_crc[9]=0x28;  // (
 3611  0b86 a628          	ld	a,#40
 3612  0b88 6b0a          	ld	(OFST-10,sp),a
-3613                     ; 1102 		command_with_crc[10]=0xA9;  // )
+3613                     ; 1103 		command_with_crc[10]=0xA9;  // )
 3615  0b8a a6a9          	ld	a,#169
 3616  0b8c 6b0b          	ld	(OFST-9,sp),a
-3617                     ; 1103 		command_with_crc[11]=0x03;  // 
+3617                     ; 1104 		command_with_crc[11]=0x03;  // 
 3619  0b8e a603          	ld	a,#3
 3620  0b90 6b0c          	ld	(OFST-8,sp),a
-3621                     ; 1104 		command_with_crc[12]=0xe4;  // bcc
+3621                     ; 1105 		command_with_crc[12]=0xe4;  // bcc
 3623  0b92 a6e4          	ld	a,#228
 3624  0b94 6b0d          	ld	(OFST-7,sp),a
-3625                     ; 1106 		uart1_out_adr(command_with_crc,13);
+3625                     ; 1107 		uart1_out_adr(command_with_crc,13);
 3627  0b96 4b0d          	push	#13
 3628  0b98 96            	ldw	x,sp
 3629  0b99 1c0002        	addw	x,#OFST-18
 3630  0b9c cd029a        	call	_uart1_out_adr
 3632  0b9f 84            	pop	a
-3633                     ; 1108 				rx_wr_index1=0;
+3633                     ; 1109 				rx_wr_index1=0;
 3635  0ba0 5f            	clrw	x
 3636  0ba1 bf2d          	ldw	_rx_wr_index1,x
-3637                     ; 1109 				rx_read_power_cnt_phase=11;
+3637                     ; 1110 				rx_read_power_cnt_phase=11;
 3639  0ba3 350b0000      	mov	_rx_read_power_cnt_phase,#11
 3640  0ba7               L1021:
-3641                     ; 1112 	if ((rx_read_power_cnt_phase==14)&&(!delayCnt))
+3641                     ; 1113 	if ((rx_read_power_cnt_phase==14)&&(!delayCnt))
 3643  0ba7 b600          	ld	a,_rx_read_power_cnt_phase
 3644  0ba9 a10e          	cp	a,#14
 3645  0bab 2703          	jreq	L651
@@ -2012,31 +2012,31 @@
 3650  0bb2 2703          	jreq	L061
 3651  0bb4 cc0a5a        	jp	L3511
 3652  0bb7               L061:
-3653                     ; 1116 		command_with_crc[0]=0x81;  //  
+3653                     ; 1117 		command_with_crc[0]=0x81;  //  
 3655  0bb7 a681          	ld	a,#129
 3656  0bb9 6b01          	ld	(OFST-19,sp),a
-3657                     ; 1117 		command_with_crc[1]=0x42;  // B
+3657                     ; 1118 		command_with_crc[1]=0x42;  // B
 3659  0bbb a642          	ld	a,#66
 3660  0bbd 6b02          	ld	(OFST-18,sp),a
-3661                     ; 1118 		command_with_crc[2]=0x30;  // 0
+3661                     ; 1119 		command_with_crc[2]=0x30;  // 0
 3663  0bbf a630          	ld	a,#48
 3664  0bc1 6b03          	ld	(OFST-17,sp),a
-3665                     ; 1119 		command_with_crc[3]=0x03;  // 
+3665                     ; 1120 		command_with_crc[3]=0x03;  // 
 3667  0bc3 a603          	ld	a,#3
 3668  0bc5 6b04          	ld	(OFST-16,sp),a
-3669                     ; 1120 		command_with_crc[4]=0xf5;  // u 
+3669                     ; 1121 		command_with_crc[4]=0xf5;  // u 
 3671  0bc7 a6f5          	ld	a,#245
 3672  0bc9 6b05          	ld	(OFST-15,sp),a
-3673                     ; 1122 		uart1_out_adr(command_with_crc,5);
+3673                     ; 1123 		uart1_out_adr(command_with_crc,5);
 3675  0bcb 4b05          	push	#5
 3676  0bcd 96            	ldw	x,sp
 3677  0bce 1c0002        	addw	x,#OFST-18
 3678  0bd1 cd029a        	call	_uart1_out_adr
 3680  0bd4 84            	pop	a
-3681                     ; 1124 				rx_wr_index1=0;
+3681                     ; 1125 				rx_wr_index1=0;
 3683  0bd5 5f            	clrw	x
 3684  0bd6 bf2d          	ldw	_rx_wr_index1,x
-3685                     ; 1125 				rx_read_power_cnt_phase=20;
+3685                     ; 1126 				rx_read_power_cnt_phase=20;
 3687  0bd8 35140000      	mov	_rx_read_power_cnt_phase,#20
 3688  0bdc ac5a0a5a      	jpf	L3511
 4265                     	xdef	_main

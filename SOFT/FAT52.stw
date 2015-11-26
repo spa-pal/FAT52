@@ -6,6 +6,10 @@ Keyword=ST7Workspace-V0.7
 [Project0]
 Filename=fat52.stp
 Dependencies=
+
+[Project1]
+Filename=fat52_lbi\fat52_lbi.stp
+Dependencies=
 [Options]
 ActiveProject=fat52
 ActiveConfig=Debug
