@@ -913,1056 +913,1036 @@
 1818  04dd               _can_in_an:
 1820  04dd 88            	push	a
 1821       00000001      OFST:	set	1
-1824                     ; 447 	GPIOD->DDR|=(1<<7);
-1826  04de 721e5011      	bset	20497,#7
-1827                     ; 448 	GPIOD->CR1|=(1<<7);
-1829  04e2 721e5012      	bset	20498,#7
-1830                     ; 449 	GPIOD->CR2&=~(1<<7);	
-1832  04e6 721f5013      	bres	20499,#7
-1833                     ; 450 	GPIOD->ODR^=(1<<7);
-1835  04ea c6500f        	ld	a,20495
-1836  04ed a880          	xor	a,	#128
-1837  04ef c7500f        	ld	20495,a
-1838                     ; 456 if((mess[6]==19)&&(mess[7]==19)&&(mess[8]==GETTM))	
-1840  04f2 b64c          	ld	a,_mess+6
-1841  04f4 a113          	cp	a,#19
-1842  04f6 2703          	jreq	L27
-1843  04f8 cc078a        	jp	L165
-1844  04fb               L27:
-1846  04fb b64d          	ld	a,_mess+7
-1847  04fd a113          	cp	a,#19
-1848  04ff 2703          	jreq	L47
-1849  0501 cc078a        	jp	L165
-1850  0504               L47:
-1852  0504 b64e          	ld	a,_mess+8
-1853  0506 a1ed          	cp	a,#237
-1854  0508 2703          	jreq	L67
-1855  050a cc078a        	jp	L165
-1856  050d               L67:
-1857                     ; 458 	GPIOD->DDR|=(1<<7);
-1859  050d 721e5011      	bset	20497,#7
-1860                     ; 459 	GPIOD->CR1|=(1<<7);
-1862  0511 721e5012      	bset	20498,#7
-1863                     ; 460 	GPIOD->CR2&=~(1<<7);	
-1865  0515 721f5013      	bres	20499,#7
-1866                     ; 461 	GPIOD->ODR^=(1<<7);
-1868  0519 c6500f        	ld	a,20495
-1869  051c a880          	xor	a,	#128
-1870  051e c7500f        	ld	20495,a
-1871                     ; 462 	can_error_cnt=0;
-1873  0521 3f24          	clr	_can_error_cnt
-1874                     ; 470 	bat_mod_dump[0][37]=((ascii2halFhex(rx_buffer[13]))<<4)+((ascii2halFhex(rx_buffer[14])));
-1876  0523 c60040        	ld	a,_rx_buffer+14
-1877  0526 cd0116        	call	_ascii2halFhex
-1879  0529 6b01          	ld	(OFST+0,sp),a
-1880  052b c6003f        	ld	a,_rx_buffer+13
-1881  052e cd0116        	call	_ascii2halFhex
-1883  0531 97            	ld	xl,a
-1884  0532 a610          	ld	a,#16
-1885  0534 42            	mul	x,a
-1886  0535 9f            	ld	a,xl
-1887  0536 1b01          	add	a,(OFST+0,sp)
-1888  0538 c70025        	ld	_bat_mod_dump+37,a
-1889                     ; 471 	bat_mod_dump[0][38]=((ascii2halFhex(rx_buffer[15]))<<4)+((ascii2halFhex(rx_buffer[16])));
-1891  053b c60042        	ld	a,_rx_buffer+16
-1892  053e cd0116        	call	_ascii2halFhex
-1894  0541 6b01          	ld	(OFST+0,sp),a
-1895  0543 c60041        	ld	a,_rx_buffer+15
-1896  0546 cd0116        	call	_ascii2halFhex
-1898  0549 97            	ld	xl,a
-1899  054a a610          	ld	a,#16
-1900  054c 42            	mul	x,a
-1901  054d 9f            	ld	a,xl
-1902  054e 1b01          	add	a,(OFST+0,sp)
-1903  0550 c70026        	ld	_bat_mod_dump+38,a
-1904                     ; 472 	bat_mod_dump[0][39]=((ascii2halFhex(rx_buffer[17]))<<4)+((ascii2halFhex(rx_buffer[18])));
-1906  0553 c60044        	ld	a,_rx_buffer+18
-1907  0556 cd0116        	call	_ascii2halFhex
-1909  0559 6b01          	ld	(OFST+0,sp),a
-1910  055b c60043        	ld	a,_rx_buffer+17
-1911  055e cd0116        	call	_ascii2halFhex
-1913  0561 97            	ld	xl,a
-1914  0562 a610          	ld	a,#16
-1915  0564 42            	mul	x,a
-1916  0565 9f            	ld	a,xl
-1917  0566 1b01          	add	a,(OFST+0,sp)
-1918  0568 c70027        	ld	_bat_mod_dump+39,a
-1919                     ; 473 	bat_mod_dump[0][40]=((ascii2halFhex(rx_buffer[19]))<<4)+((ascii2halFhex(rx_buffer[20])));
-1921  056b c60046        	ld	a,_rx_buffer+20
-1922  056e cd0116        	call	_ascii2halFhex
-1924  0571 6b01          	ld	(OFST+0,sp),a
-1925  0573 c60045        	ld	a,_rx_buffer+19
-1926  0576 cd0116        	call	_ascii2halFhex
-1928  0579 97            	ld	xl,a
-1929  057a a610          	ld	a,#16
-1930  057c 42            	mul	x,a
-1931  057d 9f            	ld	a,xl
-1932  057e 1b01          	add	a,(OFST+0,sp)
-1933  0580 c70028        	ld	_bat_mod_dump+40,a
-1934                     ; 474 	bat_mod_dump[0][41]=rs485_cnt;
-1936  0583 55000b0029    	mov	_bat_mod_dump+41,_rs485_cnt
-1937                     ; 485 	can_transmit(0x18e,bat_mod_dump[transmit_cnt_number][0],PUT_LB_TM1+transmit_cnt_number,
-1937                     ; 486 	bat_mod_dump[transmit_cnt_number][1],
-1937                     ; 487 	bat_mod_dump[transmit_cnt_number][2],bat_mod_dump[transmit_cnt_number][3],
-1937                     ; 488 	bat_mod_dump[transmit_cnt_number][4],bat_mod_dump[transmit_cnt_number][5],
-1937                     ; 489 	bat_mod_dump[transmit_cnt_number][6]);
-1939  0588 b600          	ld	a,_transmit_cnt_number
-1940  058a 97            	ld	xl,a
-1941  058b a628          	ld	a,#40
-1942  058d 42            	mul	x,a
-1943  058e d60006        	ld	a,(_bat_mod_dump+6,x)
-1944  0591 88            	push	a
-1945  0592 b600          	ld	a,_transmit_cnt_number
-1946  0594 97            	ld	xl,a
-1947  0595 a628          	ld	a,#40
-1948  0597 42            	mul	x,a
-1949  0598 d60005        	ld	a,(_bat_mod_dump+5,x)
-1950  059b 88            	push	a
-1951  059c b600          	ld	a,_transmit_cnt_number
-1952  059e 97            	ld	xl,a
-1953  059f a628          	ld	a,#40
-1954  05a1 42            	mul	x,a
-1955  05a2 d60004        	ld	a,(_bat_mod_dump+4,x)
-1956  05a5 88            	push	a
-1957  05a6 b600          	ld	a,_transmit_cnt_number
-1958  05a8 97            	ld	xl,a
-1959  05a9 a628          	ld	a,#40
-1960  05ab 42            	mul	x,a
-1961  05ac d60003        	ld	a,(_bat_mod_dump+3,x)
-1962  05af 88            	push	a
-1963  05b0 b600          	ld	a,_transmit_cnt_number
-1964  05b2 97            	ld	xl,a
-1965  05b3 a628          	ld	a,#40
-1966  05b5 42            	mul	x,a
-1967  05b6 d60002        	ld	a,(_bat_mod_dump+2,x)
-1968  05b9 88            	push	a
-1969  05ba b600          	ld	a,_transmit_cnt_number
-1970  05bc 97            	ld	xl,a
-1971  05bd a628          	ld	a,#40
-1972  05bf 42            	mul	x,a
-1973  05c0 d60001        	ld	a,(_bat_mod_dump+1,x)
-1974  05c3 88            	push	a
-1975  05c4 b600          	ld	a,_transmit_cnt_number
-1976  05c6 ab18          	add	a,#24
-1977  05c8 88            	push	a
-1978  05c9 b600          	ld	a,_transmit_cnt_number
-1979  05cb 97            	ld	xl,a
-1980  05cc a628          	ld	a,#40
-1981  05ce 42            	mul	x,a
-1982  05cf d60000        	ld	a,(_bat_mod_dump,x)
-1983  05d2 88            	push	a
-1984  05d3 ae018e        	ldw	x,#398
-1985  05d6 cd03e8        	call	_can_transmit
-1987  05d9 5b08          	addw	sp,#8
-1988                     ; 490 	can_transmit(0x18e,bat_mod_dump[transmit_cnt_number][7],PUT_LB_TM2+transmit_cnt_number,
-1988                     ; 491 	bat_mod_dump[transmit_cnt_number][8],
-1988                     ; 492 	bat_mod_dump[transmit_cnt_number][9],bat_mod_dump[transmit_cnt_number][10],
-1988                     ; 493 	bat_mod_dump[transmit_cnt_number][11],bat_mod_dump[transmit_cnt_number][12],
-1988                     ; 494 	bat_mod_dump[transmit_cnt_number][13]);
-1990  05db b600          	ld	a,_transmit_cnt_number
-1991  05dd 97            	ld	xl,a
-1992  05de a628          	ld	a,#40
-1993  05e0 42            	mul	x,a
-1994  05e1 d6000d        	ld	a,(_bat_mod_dump+13,x)
-1995  05e4 88            	push	a
-1996  05e5 b600          	ld	a,_transmit_cnt_number
-1997  05e7 97            	ld	xl,a
-1998  05e8 a628          	ld	a,#40
-1999  05ea 42            	mul	x,a
-2000  05eb d6000c        	ld	a,(_bat_mod_dump+12,x)
-2001  05ee 88            	push	a
-2002  05ef b600          	ld	a,_transmit_cnt_number
-2003  05f1 97            	ld	xl,a
-2004  05f2 a628          	ld	a,#40
-2005  05f4 42            	mul	x,a
-2006  05f5 d6000b        	ld	a,(_bat_mod_dump+11,x)
-2007  05f8 88            	push	a
-2008  05f9 b600          	ld	a,_transmit_cnt_number
-2009  05fb 97            	ld	xl,a
-2010  05fc a628          	ld	a,#40
-2011  05fe 42            	mul	x,a
-2012  05ff d6000a        	ld	a,(_bat_mod_dump+10,x)
-2013  0602 88            	push	a
-2014  0603 b600          	ld	a,_transmit_cnt_number
-2015  0605 97            	ld	xl,a
-2016  0606 a628          	ld	a,#40
-2017  0608 42            	mul	x,a
-2018  0609 d60009        	ld	a,(_bat_mod_dump+9,x)
-2019  060c 88            	push	a
-2020  060d b600          	ld	a,_transmit_cnt_number
-2021  060f 97            	ld	xl,a
-2022  0610 a628          	ld	a,#40
-2023  0612 42            	mul	x,a
-2024  0613 d60008        	ld	a,(_bat_mod_dump+8,x)
-2025  0616 88            	push	a
-2026  0617 b600          	ld	a,_transmit_cnt_number
-2027  0619 ab78          	add	a,#120
-2028  061b 88            	push	a
-2029  061c b600          	ld	a,_transmit_cnt_number
-2030  061e 97            	ld	xl,a
-2031  061f a628          	ld	a,#40
-2032  0621 42            	mul	x,a
-2033  0622 d60007        	ld	a,(_bat_mod_dump+7,x)
-2034  0625 88            	push	a
-2035  0626 ae018e        	ldw	x,#398
-2036  0629 cd03e8        	call	_can_transmit
-2038  062c 5b08          	addw	sp,#8
-2039                     ; 495 	can_transmit(0x18e,bat_mod_dump[transmit_cnt_number][14],PUT_LB_TM3+transmit_cnt_number,
-2039                     ; 496 	bat_mod_dump[transmit_cnt_number][15],
-2039                     ; 497 	bat_mod_dump[transmit_cnt_number][16],bat_mod_dump[transmit_cnt_number][17],
-2039                     ; 498 	bat_mod_dump[transmit_cnt_number][18],bat_mod_dump[transmit_cnt_number][19],
-2039                     ; 499 	bat_mod_dump[transmit_cnt_number][20]);
-2041  062e b600          	ld	a,_transmit_cnt_number
-2042  0630 97            	ld	xl,a
-2043  0631 a628          	ld	a,#40
-2044  0633 42            	mul	x,a
-2045  0634 d60014        	ld	a,(_bat_mod_dump+20,x)
-2046  0637 88            	push	a
-2047  0638 b600          	ld	a,_transmit_cnt_number
-2048  063a 97            	ld	xl,a
-2049  063b a628          	ld	a,#40
-2050  063d 42            	mul	x,a
-2051  063e d60013        	ld	a,(_bat_mod_dump+19,x)
-2052  0641 88            	push	a
-2053  0642 b600          	ld	a,_transmit_cnt_number
-2054  0644 97            	ld	xl,a
-2055  0645 a628          	ld	a,#40
-2056  0647 42            	mul	x,a
-2057  0648 d60012        	ld	a,(_bat_mod_dump+18,x)
-2058  064b 88            	push	a
-2059  064c b600          	ld	a,_transmit_cnt_number
-2060  064e 97            	ld	xl,a
-2061  064f a628          	ld	a,#40
-2062  0651 42            	mul	x,a
-2063  0652 d60011        	ld	a,(_bat_mod_dump+17,x)
-2064  0655 88            	push	a
-2065  0656 b600          	ld	a,_transmit_cnt_number
-2066  0658 97            	ld	xl,a
-2067  0659 a628          	ld	a,#40
-2068  065b 42            	mul	x,a
-2069  065c d60010        	ld	a,(_bat_mod_dump+16,x)
-2070  065f 88            	push	a
-2071  0660 b600          	ld	a,_transmit_cnt_number
-2072  0662 97            	ld	xl,a
-2073  0663 a628          	ld	a,#40
-2074  0665 42            	mul	x,a
-2075  0666 d6000f        	ld	a,(_bat_mod_dump+15,x)
-2076  0669 88            	push	a
-2077  066a b600          	ld	a,_transmit_cnt_number
-2078  066c ab38          	add	a,#56
-2079  066e 88            	push	a
-2080  066f b600          	ld	a,_transmit_cnt_number
-2081  0671 97            	ld	xl,a
-2082  0672 a628          	ld	a,#40
-2083  0674 42            	mul	x,a
-2084  0675 d6000e        	ld	a,(_bat_mod_dump+14,x)
-2085  0678 88            	push	a
-2086  0679 ae018e        	ldw	x,#398
-2087  067c cd03e8        	call	_can_transmit
-2089  067f 5b08          	addw	sp,#8
-2090                     ; 500 	can_transmit(0x18e,bat_mod_dump[transmit_cnt_number][21],PUT_LB_TM4+transmit_cnt_number,
-2090                     ; 501 	bat_mod_dump[transmit_cnt_number][22],
-2090                     ; 502 	bat_mod_dump[transmit_cnt_number][23],bat_mod_dump[transmit_cnt_number][24],
-2090                     ; 503 	bat_mod_dump[transmit_cnt_number][25],bat_mod_dump[transmit_cnt_number][26],
-2090                     ; 504 	bat_mod_dump[transmit_cnt_number][27]);
-2092  0681 b600          	ld	a,_transmit_cnt_number
-2093  0683 97            	ld	xl,a
-2094  0684 a628          	ld	a,#40
-2095  0686 42            	mul	x,a
-2096  0687 d6001b        	ld	a,(_bat_mod_dump+27,x)
-2097  068a 88            	push	a
-2098  068b b600          	ld	a,_transmit_cnt_number
-2099  068d 97            	ld	xl,a
-2100  068e a628          	ld	a,#40
-2101  0690 42            	mul	x,a
-2102  0691 d6001a        	ld	a,(_bat_mod_dump+26,x)
-2103  0694 88            	push	a
-2104  0695 b600          	ld	a,_transmit_cnt_number
-2105  0697 97            	ld	xl,a
-2106  0698 a628          	ld	a,#40
-2107  069a 42            	mul	x,a
-2108  069b d60019        	ld	a,(_bat_mod_dump+25,x)
-2109  069e 88            	push	a
-2110  069f b600          	ld	a,_transmit_cnt_number
-2111  06a1 97            	ld	xl,a
-2112  06a2 a628          	ld	a,#40
-2113  06a4 42            	mul	x,a
-2114  06a5 d60018        	ld	a,(_bat_mod_dump+24,x)
-2115  06a8 88            	push	a
-2116  06a9 b600          	ld	a,_transmit_cnt_number
-2117  06ab 97            	ld	xl,a
-2118  06ac a628          	ld	a,#40
-2119  06ae 42            	mul	x,a
-2120  06af d60017        	ld	a,(_bat_mod_dump+23,x)
-2121  06b2 88            	push	a
-2122  06b3 b600          	ld	a,_transmit_cnt_number
-2123  06b5 97            	ld	xl,a
-2124  06b6 a628          	ld	a,#40
-2125  06b8 42            	mul	x,a
-2126  06b9 d60016        	ld	a,(_bat_mod_dump+22,x)
-2127  06bc 88            	push	a
-2128  06bd b600          	ld	a,_transmit_cnt_number
-2129  06bf ab48          	add	a,#72
-2130  06c1 88            	push	a
-2131  06c2 b600          	ld	a,_transmit_cnt_number
-2132  06c4 97            	ld	xl,a
-2133  06c5 a628          	ld	a,#40
-2134  06c7 42            	mul	x,a
-2135  06c8 d60015        	ld	a,(_bat_mod_dump+21,x)
-2136  06cb 88            	push	a
-2137  06cc ae018e        	ldw	x,#398
-2138  06cf cd03e8        	call	_can_transmit
-2140  06d2 5b08          	addw	sp,#8
-2141                     ; 505 	can_transmit(0x18e,bat_mod_dump[transmit_cnt_number][28],PUT_LB_TM5+transmit_cnt_number,
-2141                     ; 506 	bat_mod_dump[transmit_cnt_number][29],
-2141                     ; 507 	bat_mod_dump[transmit_cnt_number][30],bat_mod_dump[transmit_cnt_number][31],
-2141                     ; 508 	bat_mod_dump[transmit_cnt_number][32],bat_mod_dump[transmit_cnt_number][33],
-2141                     ; 509 	bat_mod_dump[transmit_cnt_number][34]);
-2143  06d4 b600          	ld	a,_transmit_cnt_number
-2144  06d6 97            	ld	xl,a
-2145  06d7 a628          	ld	a,#40
-2146  06d9 42            	mul	x,a
-2147  06da d60022        	ld	a,(_bat_mod_dump+34,x)
-2148  06dd 88            	push	a
-2149  06de b600          	ld	a,_transmit_cnt_number
-2150  06e0 97            	ld	xl,a
-2151  06e1 a628          	ld	a,#40
-2152  06e3 42            	mul	x,a
-2153  06e4 d60021        	ld	a,(_bat_mod_dump+33,x)
-2154  06e7 88            	push	a
-2155  06e8 b600          	ld	a,_transmit_cnt_number
-2156  06ea 97            	ld	xl,a
-2157  06eb a628          	ld	a,#40
-2158  06ed 42            	mul	x,a
-2159  06ee d60020        	ld	a,(_bat_mod_dump+32,x)
-2160  06f1 88            	push	a
-2161  06f2 b600          	ld	a,_transmit_cnt_number
-2162  06f4 97            	ld	xl,a
-2163  06f5 a628          	ld	a,#40
-2164  06f7 42            	mul	x,a
-2165  06f8 d6001f        	ld	a,(_bat_mod_dump+31,x)
-2166  06fb 88            	push	a
-2167  06fc b600          	ld	a,_transmit_cnt_number
-2168  06fe 97            	ld	xl,a
-2169  06ff a628          	ld	a,#40
-2170  0701 42            	mul	x,a
-2171  0702 d6001e        	ld	a,(_bat_mod_dump+30,x)
-2172  0705 88            	push	a
-2173  0706 b600          	ld	a,_transmit_cnt_number
-2174  0708 97            	ld	xl,a
-2175  0709 a628          	ld	a,#40
-2176  070b 42            	mul	x,a
-2177  070c d6001d        	ld	a,(_bat_mod_dump+29,x)
-2178  070f 88            	push	a
-2179  0710 b600          	ld	a,_transmit_cnt_number
-2180  0712 ab58          	add	a,#88
-2181  0714 88            	push	a
-2182  0715 b600          	ld	a,_transmit_cnt_number
-2183  0717 97            	ld	xl,a
-2184  0718 a628          	ld	a,#40
-2185  071a 42            	mul	x,a
-2186  071b d6001c        	ld	a,(_bat_mod_dump+28,x)
-2187  071e 88            	push	a
-2188  071f ae018e        	ldw	x,#398
-2189  0722 cd03e8        	call	_can_transmit
-2191  0725 5b08          	addw	sp,#8
-2192                     ; 510 	can_transmit(0x18e,bat_mod_dump[transmit_cnt_number][35],PUT_LB_TM6+transmit_cnt_number,
-2192                     ; 511 	bat_mod_dump[transmit_cnt_number][36],
-2192                     ; 512 	bat_mod_dump[transmit_cnt_number][37],bat_mod_dump[transmit_cnt_number][38],
-2192                     ; 513 	bat_mod_dump[transmit_cnt_number][39],bat_mod_dump[transmit_cnt_number][40],
-2192                     ; 514 	bat_mod_dump[transmit_cnt_number][41]);
-2194  0727 b600          	ld	a,_transmit_cnt_number
-2195  0729 97            	ld	xl,a
-2196  072a a628          	ld	a,#40
-2197  072c 42            	mul	x,a
-2198  072d d60029        	ld	a,(_bat_mod_dump+41,x)
-2199  0730 88            	push	a
-2200  0731 b600          	ld	a,_transmit_cnt_number
-2201  0733 97            	ld	xl,a
-2202  0734 a628          	ld	a,#40
-2203  0736 42            	mul	x,a
-2204  0737 d60028        	ld	a,(_bat_mod_dump+40,x)
-2205  073a 88            	push	a
-2206  073b b600          	ld	a,_transmit_cnt_number
-2207  073d 97            	ld	xl,a
-2208  073e a628          	ld	a,#40
-2209  0740 42            	mul	x,a
-2210  0741 d60027        	ld	a,(_bat_mod_dump+39,x)
-2211  0744 88            	push	a
-2212  0745 b600          	ld	a,_transmit_cnt_number
-2213  0747 97            	ld	xl,a
-2214  0748 a628          	ld	a,#40
-2215  074a 42            	mul	x,a
-2216  074b d60026        	ld	a,(_bat_mod_dump+38,x)
-2217  074e 88            	push	a
-2218  074f b600          	ld	a,_transmit_cnt_number
-2219  0751 97            	ld	xl,a
-2220  0752 a628          	ld	a,#40
-2221  0754 42            	mul	x,a
-2222  0755 d60025        	ld	a,(_bat_mod_dump+37,x)
-2223  0758 88            	push	a
-2224  0759 b600          	ld	a,_transmit_cnt_number
-2225  075b 97            	ld	xl,a
-2226  075c a628          	ld	a,#40
-2227  075e 42            	mul	x,a
-2228  075f d60024        	ld	a,(_bat_mod_dump+36,x)
-2229  0762 88            	push	a
-2230  0763 b600          	ld	a,_transmit_cnt_number
-2231  0765 ab68          	add	a,#104
-2232  0767 88            	push	a
-2233  0768 b600          	ld	a,_transmit_cnt_number
-2234  076a 97            	ld	xl,a
-2235  076b a628          	ld	a,#40
-2236  076d 42            	mul	x,a
-2237  076e d60023        	ld	a,(_bat_mod_dump+35,x)
-2238  0771 88            	push	a
-2239  0772 ae018e        	ldw	x,#398
-2240  0775 cd03e8        	call	_can_transmit
-2242  0778 5b08          	addw	sp,#8
-2243                     ; 517      link_cnt=0;
-2245  077a 3f0a          	clr	_link_cnt
-2246                     ; 518      link=ON;
-2248  077c 3555000b      	mov	_link,#85
-2249                     ; 520 	transmit_cnt_number++;
-2251  0780 3c00          	inc	_transmit_cnt_number
-2252                     ; 521 	if(transmit_cnt_number>=7)transmit_cnt_number=0;
-2254  0782 b600          	ld	a,_transmit_cnt_number
-2255  0784 a107          	cp	a,#7
-2256  0786 2502          	jrult	L165
-2259  0788 3f00          	clr	_transmit_cnt_number
-2260  078a               L165:
-2261                     ; 531 can_in_an_end:
-2261                     ; 532 bCAN_RX=0;
-2263  078a 3f08          	clr	_bCAN_RX
-2264                     ; 533 }   
-2267  078c 84            	pop	a
-2268  078d 81            	ret
-2291                     ; 537 void t4_init(void){
-2292                     	switch	.text
-2293  078e               _t4_init:
-2297                     ; 538 	TIM4->PSCR = 7;
-2299  078e 35075345      	mov	21317,#7
-2300                     ; 539 	TIM4->ARR= 77;
-2302  0792 354d5346      	mov	21318,#77
-2303                     ; 540 	TIM4->IER|= TIM4_IER_UIE;					// enable break interrupt
-2305  0796 72105341      	bset	21313,#0
-2306                     ; 542 	TIM4->CR1=(TIM4_CR1_URS | TIM4_CR1_CEN | TIM4_CR1_ARPE);	
-2308  079a 35855340      	mov	21312,#133
-2309                     ; 544 }
-2312  079e 81            	ret
-2347                     ; 550 @far @interrupt void TIM4_UPD_Interrupt (void) 
-2347                     ; 551 {
-2349                     	switch	.text
-2350  079f               f_TIM4_UPD_Interrupt:
-2354                     ; 552 TIM4->SR1&=~TIM4_SR1_UIF;
-2356  079f 72115342      	bres	21314,#0
-2357                     ; 555 if(++t0_cnt0>=10)
-2359  07a3 3c00          	inc	_t0_cnt0
-2360  07a5 b600          	ld	a,_t0_cnt0
-2361  07a7 a10a          	cp	a,#10
-2362  07a9 253e          	jrult	L126
-2363                     ; 557 	t0_cnt0=0;
-2365  07ab 3f00          	clr	_t0_cnt0
-2366                     ; 558 	b100Hz=1;
-2368  07ad 72100006      	bset	_b100Hz
-2369                     ; 560 	if(++t0_cnt1>=10)
-2371  07b1 3c01          	inc	_t0_cnt1
-2372  07b3 b601          	ld	a,_t0_cnt1
-2373  07b5 a10a          	cp	a,#10
-2374  07b7 2506          	jrult	L326
-2375                     ; 562 		t0_cnt1=0;
-2377  07b9 3f01          	clr	_t0_cnt1
-2378                     ; 563 		b10Hz=1;
-2380  07bb 72100005      	bset	_b10Hz
-2381  07bf               L326:
-2382                     ; 566 	if(++t0_cnt2>=20)
-2384  07bf 3c02          	inc	_t0_cnt2
-2385  07c1 b602          	ld	a,_t0_cnt2
-2386  07c3 a114          	cp	a,#20
-2387  07c5 2506          	jrult	L526
-2388                     ; 568 		t0_cnt2=0;
-2390  07c7 3f02          	clr	_t0_cnt2
-2391                     ; 569 		b5Hz=1;
-2393  07c9 72100004      	bset	_b5Hz
-2394  07cd               L526:
-2395                     ; 573 	if(++t0_cnt4>=50)
-2397  07cd 3c04          	inc	_t0_cnt4
-2398  07cf b604          	ld	a,_t0_cnt4
-2399  07d1 a132          	cp	a,#50
-2400  07d3 2506          	jrult	L726
-2401                     ; 575 		t0_cnt4=0;
-2403  07d5 3f04          	clr	_t0_cnt4
-2404                     ; 576 		b2Hz=1;
-2406  07d7 72100003      	bset	_b2Hz
-2407  07db               L726:
-2408                     ; 579 	if(++t0_cnt3>=100)
-2410  07db 3c03          	inc	_t0_cnt3
-2411  07dd b603          	ld	a,_t0_cnt3
-2412  07df a164          	cp	a,#100
-2413  07e1 2506          	jrult	L126
-2414                     ; 581 		t0_cnt3=0;
-2416  07e3 3f03          	clr	_t0_cnt3
-2417                     ; 582 		b1Hz=1;
-2419  07e5 72100002      	bset	_b1Hz
-2420  07e9               L126:
-2421                     ; 589 if(tx_stat_cnt)
-2423  07e9 725d0331      	tnz	_tx_stat_cnt
-2424  07ed 270c          	jreq	L336
-2425                     ; 591 	tx_stat_cnt--;
-2427  07ef 725a0331      	dec	_tx_stat_cnt
-2428                     ; 592 	if(tx_stat_cnt==0)tx_stat=tsOFF;
-2430  07f3 725d0331      	tnz	_tx_stat_cnt
-2431  07f7 2602          	jrne	L336
-2434  07f9 3f05          	clr	_tx_stat
-2435  07fb               L336:
-2436                     ; 607 }
-2439  07fb 80            	iret
-2464                     ; 610 @far @interrupt void CAN_RX_Interrupt (void) 
-2464                     ; 611 {
-2465                     	switch	.text
-2466  07fc               f_CAN_RX_Interrupt:
-2470                     ; 621 CAN->PSR= 7;
-2472  07fc 35075427      	mov	21543,#7
-2473                     ; 630 memcpy(&mess[0], &CAN->Page.RxFIFO.MFMI, 14); // compare the message content
-2475  0800 ae000e        	ldw	x,#14
-2476  0803               L601:
-2477  0803 d65427        	ld	a,(21543,x)
-2478  0806 e745          	ld	(_mess-1,x),a
-2479  0808 5a            	decw	x
-2480  0809 26f8          	jrne	L601
-2481                     ; 641 bCAN_RX=1;
-2483  080b 35010008      	mov	_bCAN_RX,#1
-2484                     ; 642 CAN->RFR|=(1<<5);
-2486  080f 721a5424      	bset	21540,#5
-2487                     ; 644 }
-2490  0813 80            	iret
-2513                     ; 647 @far @interrupt void CAN_TX_Interrupt (void) 
-2513                     ; 648 {
-2514                     	switch	.text
-2515  0814               f_CAN_TX_Interrupt:
-2519                     ; 649 	if((CAN->TSR)&(1<<0))
-2521  0814 c65422        	ld	a,21538
-2522  0817 a501          	bcp	a,#1
-2523  0819 2708          	jreq	L756
-2524                     ; 651 	bTX_FREE=1;	
-2526  081b 35010007      	mov	_bTX_FREE,#1
-2527                     ; 653 	CAN->TSR|=(1<<0);
-2529  081f 72105422      	bset	21538,#0
-2530  0823               L756:
-2531                     ; 655 }
-2534  0823 80            	iret
-2572                     ; 659 @far @interrupt void UART1TxInterrupt (void) 
-2572                     ; 660 {
-2573                     	switch	.text
-2574  0824               f_UART1TxInterrupt:
-2576       00000001      OFST:	set	1
-2577  0824 88            	push	a
-2580                     ; 663 tx_status=UART1->SR;
-2582  0825 c65230        	ld	a,21040
-2583  0828 6b01          	ld	(OFST+0,sp),a
-2584                     ; 665 if (tx_status & (UART1_SR_TXE))
-2586  082a 7b01          	ld	a,(OFST+0,sp)
-2587  082c a580          	bcp	a,#128
-2588  082e 272b          	jreq	L776
-2589                     ; 667 	if (tx_counter1)
-2591  0830 3d31          	tnz	_tx_counter1
-2592  0832 271b          	jreq	L107
-2593                     ; 669 		--tx_counter1;
-2595  0834 3a31          	dec	_tx_counter1
-2596                     ; 670 		UART1->DR=tx_buffer1[tx_rd_index1];
-2598  0836 5f            	clrw	x
-2599  0837 b62f          	ld	a,_tx_rd_index1
-2600  0839 2a01          	jrpl	L411
-2601  083b 53            	cplw	x
-2602  083c               L411:
-2603  083c 97            	ld	xl,a
-2604  083d d60000        	ld	a,(_tx_buffer1,x)
-2605  0840 c75231        	ld	21041,a
-2606                     ; 671 		if (++tx_rd_index1 == TX_BUFFER_SIZE1) tx_rd_index1=0;
-2608  0843 3c2f          	inc	_tx_rd_index1
-2609  0845 b62f          	ld	a,_tx_rd_index1
-2610  0847 a132          	cp	a,#50
-2611  0849 2610          	jrne	L776
-2614  084b 3f2f          	clr	_tx_rd_index1
-2615  084d 200c          	jra	L776
-2616  084f               L107:
-2617                     ; 675 		tx_stat_cnt=3;
-2619  084f 35030331      	mov	_tx_stat_cnt,#3
-2620                     ; 676 			bOUT_FREE=1;
-2622  0853 35010028      	mov	_bOUT_FREE,#1
-2623                     ; 677 			UART1->CR2&= ~UART1_CR2_TIEN;
-2625  0857 721f5235      	bres	21045,#7
-2626  085b               L776:
-2627                     ; 681 if (tx_status & (UART1_SR_TC))
-2629  085b 7b01          	ld	a,(OFST+0,sp)
-2630  085d a540          	bcp	a,#64
-2631  085f 2708          	jreq	L707
-2632                     ; 683 	GPIOB->ODR&=~(1<<7);
-2634  0861 721f5005      	bres	20485,#7
-2635                     ; 684 	UART1->SR&=~UART1_SR_TC;
-2637  0865 721d5230      	bres	21040,#6
-2638  0869               L707:
-2639                     ; 686 }
-2642  0869 84            	pop	a
-2643  086a 80            	iret
-2697                     ; 689 @far @interrupt void UART1RxInterrupt (void) 
-2697                     ; 690 {
-2698                     	switch	.text
-2699  086b               f_UART1RxInterrupt:
-2701       00000003      OFST:	set	3
-2702  086b 5203          	subw	sp,#3
-2705                     ; 693 rx_status=UART1->SR;
-2707  086d c65230        	ld	a,21040
-2708  0870 6b02          	ld	(OFST-1,sp),a
-2709                     ; 694 rx_data=UART1->DR;
-2711  0872 c65231        	ld	a,21041
-2712  0875 6b03          	ld	(OFST+0,sp),a
-2713                     ; 696 if (rx_status & (UART1_SR_RXNE))
-2715  0877 7b02          	ld	a,(OFST-1,sp)
-2716  0879 a520          	bcp	a,#32
-2717  087b 2739          	jreq	L737
-2718                     ; 699 temp=rx_data;
-2720                     ; 700 rx_buffer[rs485_rx_cnt]=rx_data;
-2722  087d 7b03          	ld	a,(OFST+0,sp)
-2723  087f be02          	ldw	x,_rs485_rx_cnt
-2724  0881 d70032        	ld	(_rx_buffer,x),a
-2725                     ; 701 rs485_rx_cnt++;
-2727  0884 be02          	ldw	x,_rs485_rx_cnt
-2728  0886 1c0001        	addw	x,#1
-2729  0889 bf02          	ldw	_rs485_rx_cnt,x
-2730                     ; 717 	if((rx_data==0x0d)&&(rs485_rx_cnt==298))bRX485=1;
-2732  088b 7b03          	ld	a,(OFST+0,sp)
-2733  088d a10d          	cp	a,#13
-2734  088f 260b          	jrne	L147
-2736  0891 be02          	ldw	x,_rs485_rx_cnt
-2737  0893 a3012a        	cpw	x,#298
-2738  0896 2604          	jrne	L147
-2741  0898 35010001      	mov	_bRX485,#1
-2742  089c               L147:
-2743                     ; 718 	if((rx_data==0x0d)&&(rs485_rx_cnt==264))bRX485=2;
-2745  089c 7b03          	ld	a,(OFST+0,sp)
-2746  089e a10d          	cp	a,#13
-2747  08a0 260b          	jrne	L347
-2749  08a2 be02          	ldw	x,_rs485_rx_cnt
-2750  08a4 a30108        	cpw	x,#264
-2751  08a7 2604          	jrne	L347
-2754  08a9 35020001      	mov	_bRX485,#2
-2755  08ad               L347:
-2756                     ; 720 	if(rx_data==0x0d)rs485_rx_cnt=0;	
-2758  08ad 7b03          	ld	a,(OFST+0,sp)
-2759  08af a10d          	cp	a,#13
-2760  08b1 2603          	jrne	L737
-2763  08b3 5f            	clrw	x
-2764  08b4 bf02          	ldw	_rs485_rx_cnt,x
-2765  08b6               L737:
-2766                     ; 725 }
-2769  08b6 5b03          	addw	sp,#3
-2770  08b8 80            	iret
-2812                     ; 734 main()
-2812                     ; 735 {
-2814                     	switch	.text
-2815  08b9               _main:
-2819                     ; 736 CLK->ECKR|=1;
-2821  08b9 721050c1      	bset	20673,#0
-2823  08bd               L167:
-2824                     ; 737 while((CLK->ECKR & 2) == 0);
-2826  08bd c650c1        	ld	a,20673
-2827  08c0 a502          	bcp	a,#2
-2828  08c2 27f9          	jreq	L167
-2829                     ; 738 CLK->SWCR|=2;
-2831  08c4 721250c5      	bset	20677,#1
-2832                     ; 739 CLK->SWR=0xB4;
-2834  08c8 35b450c4      	mov	20676,#180
-2835                     ; 742 t4_init();
-2837  08cc cd078e        	call	_t4_init
-2839                     ; 744 		GPIOG->DDR|=(1<<0);
-2841  08cf 72105020      	bset	20512,#0
-2842                     ; 745 		GPIOG->CR1|=(1<<0);
-2844  08d3 72105021      	bset	20513,#0
-2845                     ; 746 		GPIOG->CR2&=~(1<<0);	
-2847  08d7 72115022      	bres	20514,#0
-2848                     ; 749 		GPIOG->DDR&=~(1<<1);
-2850  08db 72135020      	bres	20512,#1
-2851                     ; 750 		GPIOG->CR1|=(1<<1);
-2853  08df 72125021      	bset	20513,#1
-2854                     ; 751 		GPIOG->CR2&=~(1<<1);
-2856  08e3 72135022      	bres	20514,#1
-2857                     ; 753 init_CAN();
-2859  08e7 cd0391        	call	_init_CAN
-2861                     ; 761 uart1_init();
-2863  08ea cd003c        	call	_uart1_init
-2865                     ; 763 adress=19;
-2867  08ed 35130119      	mov	_adress,#19
-2868                     ; 765 bat_mod_dump[0][5]=1;
-2870  08f1 35010005      	mov	_bat_mod_dump+5,#1
-2871                     ; 766 bat_mod_dump[1][5]=2;
-2873  08f5 3502002d      	mov	_bat_mod_dump+45,#2
-2874                     ; 767 bat_mod_dump[2][5]=3;
-2876  08f9 35030055      	mov	_bat_mod_dump+85,#3
-2877                     ; 768 bat_mod_dump[3][5]=4;
-2879  08fd 3504007d      	mov	_bat_mod_dump+125,#4
-2880                     ; 769 bat_mod_dump[4][5]=5;
-2882  0901 350500a5      	mov	_bat_mod_dump+165,#5
-2883                     ; 770 bat_mod_dump[5][5]=6;
-2885  0905 350600cd      	mov	_bat_mod_dump+205,#6
-2886                     ; 771 bat_mod_dump[6][5]=7;
-2888  0909 350700f5      	mov	_bat_mod_dump+245,#7
-2889                     ; 773 enableInterrupts();
-2892  090d 9a            rim
-2894  090e               L567:
-2895                     ; 777 	if(bRX485)
-2897  090e 3d01          	tnz	_bRX485
-2898  0910 2703          	jreq	L177
-2899                     ; 779 		rx485_in_an();
-2901  0912 cd029c        	call	_rx485_in_an
-2903  0915               L177:
-2904                     ; 782 	if(bCAN_RX)
-2906  0915 3d08          	tnz	_bCAN_RX
-2907  0917 2719          	jreq	L377
-2908                     ; 784 		bCAN_RX=0;
-2910  0919 3f08          	clr	_bCAN_RX
-2911                     ; 785 		can_in_an();
-2913  091b cd04dd        	call	_can_in_an
-2915                     ; 787 GPIOD->DDR|=(1<<7);
-2917  091e 721e5011      	bset	20497,#7
-2918                     ; 788 		GPIOD->CR1|=(1<<7);
-2920  0922 721e5012      	bset	20498,#7
-2921                     ; 789 		GPIOD->CR2&=~(1<<7);	
-2923  0926 721f5013      	bres	20499,#7
-2924                     ; 790 		GPIOD->ODR^=(1<<7);
-2926  092a c6500f        	ld	a,20495
-2927  092d a880          	xor	a,	#128
-2928  092f c7500f        	ld	20495,a
-2929  0932               L377:
-2930                     ; 794 	if(b100Hz)
-2932                     	btst	_b100Hz
-2933  0937 2404          	jruge	L577
-2934                     ; 796 		b100Hz=0;
-2936  0939 72110006      	bres	_b100Hz
-2937  093d               L577:
-2938                     ; 799 	if(b10Hz)
-2940                     	btst	_b10Hz
-2941  0942 2407          	jruge	L777
-2942                     ; 801 		b10Hz=0;
-2944  0944 72110005      	bres	_b10Hz
-2945                     ; 803 			can_tx_hndl();
-2947  0948 cd0476        	call	_can_tx_hndl
-2949  094b               L777:
-2950                     ; 809 	if(b2Hz)
-2952                     	btst	_b2Hz
-2953  0950 2503          	jrult	L221
-2954  0952 cc0a1c        	jp	L1001
-2955  0955               L221:
-2956                     ; 811 		b2Hz=0;
-2958  0955 72110003      	bres	_b2Hz
-2959                     ; 813 		if(bBAT_REQ)
-2961                     	btst	_bBAT_REQ
-2962  095e 245f          	jruge	L3001
-2963                     ; 815 			bBAT_REQ=0;
-2965  0960 72110001      	bres	_bBAT_REQ
-2966                     ; 817 			rs485_out_buff[0]=0x7e;
-2968  0964 357e0032      	mov	_rs485_out_buff,#126
-2969                     ; 818 			rs485_out_buff[1]=0x31;
-2971  0968 35310033      	mov	_rs485_out_buff+1,#49
-2972                     ; 819 			rs485_out_buff[2]=0x31;
-2974  096c 35310034      	mov	_rs485_out_buff+2,#49
-2975                     ; 820 			rs485_out_buff[3]=0x30;
-2977  0970 35300035      	mov	_rs485_out_buff+3,#48
-2978                     ; 821 			rs485_out_buff[4]=0x31;
-2980  0974 35310036      	mov	_rs485_out_buff+4,#49
-2981                     ; 822 			rs485_out_buff[5]=0x44;
-2983  0978 35440037      	mov	_rs485_out_buff+5,#68
-2984                     ; 823 			rs485_out_buff[6]=0x30;
-2986  097c 35300038      	mov	_rs485_out_buff+6,#48
-2987                     ; 824 			rs485_out_buff[7]=0x38;
-2989  0980 35380039      	mov	_rs485_out_buff+7,#56
-2990                     ; 825 			rs485_out_buff[8]=0x32;
-2992  0984 3532003a      	mov	_rs485_out_buff+8,#50
-2993                     ; 826 			rs485_out_buff[9]=0x45;
-2995  0988 3545003b      	mov	_rs485_out_buff+9,#69
-2996                     ; 827 			rs485_out_buff[10]=0x30;
-2998  098c 3530003c      	mov	_rs485_out_buff+10,#48
-2999                     ; 828 			rs485_out_buff[11]=0x30;
-3001  0990 3530003d      	mov	_rs485_out_buff+11,#48
-3002                     ; 829 			rs485_out_buff[12]=0x32;
-3004  0994 3532003e      	mov	_rs485_out_buff+12,#50
-3005                     ; 830 			rs485_out_buff[13]=0x30;
-3007  0998 3530003f      	mov	_rs485_out_buff+13,#48
-3008                     ; 831 			rs485_out_buff[14]=0x31;
-3010  099c 35310040      	mov	_rs485_out_buff+14,#49
-3011                     ; 832 			rs485_out_buff[15]=0x46;
-3013  09a0 35460041      	mov	_rs485_out_buff+15,#70
-3014                     ; 833 			rs485_out_buff[16]=0x44;
-3016  09a4 35440042      	mov	_rs485_out_buff+16,#68
-3017                     ; 834 			rs485_out_buff[17]=0x32;
-3019  09a8 35320043      	mov	_rs485_out_buff+17,#50
-3020                     ; 835 			rs485_out_buff[18]=0x37;
-3022  09ac 35370044      	mov	_rs485_out_buff+18,#55
-3023                     ; 836 			rs485_out_buff[19]=0x0d;
-3025  09b0 350d0045      	mov	_rs485_out_buff+19,#13
-3026                     ; 838 			uart1_out_adr(rs485_out_buff,20);
-3028  09b4 4b14          	push	#20
-3029  09b6 ae0032        	ldw	x,#_rs485_out_buff
-3030  09b9 cd00c3        	call	_uart1_out_adr
-3032  09bc 84            	pop	a
-3034  09bd 205d          	jra	L1001
-3035  09bf               L3001:
-3036                     ; 842 			bBAT_REQ=1;
-3038  09bf 72100001      	bset	_bBAT_REQ
-3039                     ; 844 			rs485_out_buff[0]=0x7e;
-3041  09c3 357e0032      	mov	_rs485_out_buff,#126
-3042                     ; 845 			rs485_out_buff[1]=0x31;
-3044  09c7 35310033      	mov	_rs485_out_buff+1,#49
-3045                     ; 846 			rs485_out_buff[2]=0x31;
-3047  09cb 35310034      	mov	_rs485_out_buff+2,#49
-3048                     ; 847 			rs485_out_buff[3]=0x30;
-3050  09cf 35300035      	mov	_rs485_out_buff+3,#48
-3051                     ; 848 			rs485_out_buff[4]=0x31;
-3053  09d3 35310036      	mov	_rs485_out_buff+4,#49
-3054                     ; 849 			rs485_out_buff[5]=0x44;
-3056  09d7 35440037      	mov	_rs485_out_buff+5,#68
-3057                     ; 850 			rs485_out_buff[6]=0x30;
-3059  09db 35300038      	mov	_rs485_out_buff+6,#48
-3060                     ; 851 			rs485_out_buff[7]=0x38;
-3062  09df 35380039      	mov	_rs485_out_buff+7,#56
-3063                     ; 852 			rs485_out_buff[8]=0x33;
-3065  09e3 3533003a      	mov	_rs485_out_buff+8,#51
-3066                     ; 853 			rs485_out_buff[9]=0x45;
-3068  09e7 3545003b      	mov	_rs485_out_buff+9,#69
-3069                     ; 854 			rs485_out_buff[10]=0x30;
-3071  09eb 3530003c      	mov	_rs485_out_buff+10,#48
-3072                     ; 855 			rs485_out_buff[11]=0x30;
-3074  09ef 3530003d      	mov	_rs485_out_buff+11,#48
-3075                     ; 856 			rs485_out_buff[12]=0x32;
-3077  09f3 3532003e      	mov	_rs485_out_buff+12,#50
-3078                     ; 857 			rs485_out_buff[13]=0x30;
-3080  09f7 3530003f      	mov	_rs485_out_buff+13,#48
-3081                     ; 858 			rs485_out_buff[14]=0x31;
-3083  09fb 35310040      	mov	_rs485_out_buff+14,#49
-3084                     ; 859 			rs485_out_buff[15]=0x46;
-3086  09ff 35460041      	mov	_rs485_out_buff+15,#70
-3087                     ; 860 			rs485_out_buff[16]=0x44;
-3089  0a03 35440042      	mov	_rs485_out_buff+16,#68
-3090                     ; 861 			rs485_out_buff[17]=0x32;
-3092  0a07 35320043      	mov	_rs485_out_buff+17,#50
-3093                     ; 862 			rs485_out_buff[18]=0x36;
-3095  0a0b 35360044      	mov	_rs485_out_buff+18,#54
-3096                     ; 863 			rs485_out_buff[19]=0x0d;
-3098  0a0f 350d0045      	mov	_rs485_out_buff+19,#13
-3099                     ; 865 			uart1_out_adr(rs485_out_buff,20);
-3101  0a13 4b14          	push	#20
-3102  0a15 ae0032        	ldw	x,#_rs485_out_buff
-3103  0a18 cd00c3        	call	_uart1_out_adr
-3105  0a1b 84            	pop	a
-3106  0a1c               L1001:
-3107                     ; 869 	if(b1Hz)
-3109                     	btst	_b1Hz
-3110  0a21 2503          	jrult	L421
-3111  0a23 cc090e        	jp	L567
-3112  0a26               L421:
-3113                     ; 871 		b1Hz=0;
-3115  0a26 72110002      	bres	_b1Hz
-3116                     ; 880 		if(++rs485_cnt>=100)
-3118  0a2a 3c0b          	inc	_rs485_cnt
-3119  0a2c b60b          	ld	a,_rs485_cnt
-3120  0a2e a164          	cp	a,#100
-3121  0a30 2403          	jruge	L621
-3122  0a32 cc090e        	jp	L567
-3123  0a35               L621:
-3124                     ; 882 			rs485_cnt=100;
-3126  0a35 3564000b      	mov	_rs485_cnt,#100
-3127                     ; 883 			bRS485ERR=1;
-3129  0a39 72100000      	bset	_bRS485ERR
-3130  0a3d ac0e090e      	jpf	L567
-3710                     	xdef	_main
-3711                     	xdef	f_UART1RxInterrupt
-3712                     	xdef	f_UART1TxInterrupt
-3713                     	xdef	f_CAN_TX_Interrupt
-3714                     	xdef	f_CAN_RX_Interrupt
-3715                     	xdef	f_TIM4_UPD_Interrupt
-3716                     	xdef	_t4_init
-3717                     	xdef	_can_in_an
-3718                     	xdef	_can_tx_hndl
-3719                     	xdef	_can_transmit
-3720                     	xdef	_init_CAN
-3721                     	xdef	_rx485_in_an
-3722                     	xdef	_str2int
-3723                     	xdef	_ascii2hex
-3724                     	xdef	_ascii2halFhex
-3725                     	xdef	_uart1_out_adr
-3726                     	xdef	_putchar1
-3727                     	xdef	_uart1_init
-3728                     	xdef	_gran
-3729                     	xdef	_gran_char
-3730                     	switch	.bss
-3731  0000               _bat_mod_dump:
-3732  0000 000000000000  	ds.b	280
-3733                     	xdef	_bat_mod_dump
-3734                     	switch	.ubsct
-3735  0000               _transmit_cnt_number:
-3736  0000 00            	ds.b	1
-3737                     	xdef	_transmit_cnt_number
-3738                     .bit:	section	.data,bit
-3739  0000               _bRS485ERR:
-3740  0000 00            	ds.b	1
-3741                     	xdef	_bRS485ERR
-3742                     	xdef	_rs485_cnt
+1824                     ; 456 if((mess[6]==19)&&(mess[7]==19)&&(mess[8]==GETTM))	
+1826  04de b64c          	ld	a,_mess+6
+1827  04e0 a113          	cp	a,#19
+1828  04e2 2703          	jreq	L27
+1829  04e4 cc0776        	jp	L165
+1830  04e7               L27:
+1832  04e7 b64d          	ld	a,_mess+7
+1833  04e9 a113          	cp	a,#19
+1834  04eb 2703          	jreq	L47
+1835  04ed cc0776        	jp	L165
+1836  04f0               L47:
+1838  04f0 b64e          	ld	a,_mess+8
+1839  04f2 a1ed          	cp	a,#237
+1840  04f4 2703          	jreq	L67
+1841  04f6 cc0776        	jp	L165
+1842  04f9               L67:
+1843                     ; 458 	GPIOD->DDR|=(1<<7);
+1845  04f9 721e5011      	bset	20497,#7
+1846                     ; 459 	GPIOD->CR1|=(1<<7);
+1848  04fd 721e5012      	bset	20498,#7
+1849                     ; 460 	GPIOD->CR2&=~(1<<7);	
+1851  0501 721f5013      	bres	20499,#7
+1852                     ; 461 	GPIOD->ODR^=(1<<7);
+1854  0505 c6500f        	ld	a,20495
+1855  0508 a880          	xor	a,	#128
+1856  050a c7500f        	ld	20495,a
+1857                     ; 462 	can_error_cnt=0;
+1859  050d 3f24          	clr	_can_error_cnt
+1860                     ; 470 	bat_mod_dump[0][37]=((ascii2halFhex(rx_buffer[13]))<<4)+((ascii2halFhex(rx_buffer[14])));
+1862  050f c60040        	ld	a,_rx_buffer+14
+1863  0512 cd0116        	call	_ascii2halFhex
+1865  0515 6b01          	ld	(OFST+0,sp),a
+1866  0517 c6003f        	ld	a,_rx_buffer+13
+1867  051a cd0116        	call	_ascii2halFhex
+1869  051d 97            	ld	xl,a
+1870  051e a610          	ld	a,#16
+1871  0520 42            	mul	x,a
+1872  0521 9f            	ld	a,xl
+1873  0522 1b01          	add	a,(OFST+0,sp)
+1874  0524 c70025        	ld	_bat_mod_dump+37,a
+1875                     ; 471 	bat_mod_dump[0][38]=((ascii2halFhex(rx_buffer[15]))<<4)+((ascii2halFhex(rx_buffer[16])));
+1877  0527 c60042        	ld	a,_rx_buffer+16
+1878  052a cd0116        	call	_ascii2halFhex
+1880  052d 6b01          	ld	(OFST+0,sp),a
+1881  052f c60041        	ld	a,_rx_buffer+15
+1882  0532 cd0116        	call	_ascii2halFhex
+1884  0535 97            	ld	xl,a
+1885  0536 a610          	ld	a,#16
+1886  0538 42            	mul	x,a
+1887  0539 9f            	ld	a,xl
+1888  053a 1b01          	add	a,(OFST+0,sp)
+1889  053c c70026        	ld	_bat_mod_dump+38,a
+1890                     ; 472 	bat_mod_dump[0][39]=((ascii2halFhex(rx_buffer[17]))<<4)+((ascii2halFhex(rx_buffer[18])));
+1892  053f c60044        	ld	a,_rx_buffer+18
+1893  0542 cd0116        	call	_ascii2halFhex
+1895  0545 6b01          	ld	(OFST+0,sp),a
+1896  0547 c60043        	ld	a,_rx_buffer+17
+1897  054a cd0116        	call	_ascii2halFhex
+1899  054d 97            	ld	xl,a
+1900  054e a610          	ld	a,#16
+1901  0550 42            	mul	x,a
+1902  0551 9f            	ld	a,xl
+1903  0552 1b01          	add	a,(OFST+0,sp)
+1904  0554 c70027        	ld	_bat_mod_dump+39,a
+1905                     ; 473 	bat_mod_dump[0][40]=((ascii2halFhex(rx_buffer[19]))<<4)+((ascii2halFhex(rx_buffer[20])));
+1907  0557 c60046        	ld	a,_rx_buffer+20
+1908  055a cd0116        	call	_ascii2halFhex
+1910  055d 6b01          	ld	(OFST+0,sp),a
+1911  055f c60045        	ld	a,_rx_buffer+19
+1912  0562 cd0116        	call	_ascii2halFhex
+1914  0565 97            	ld	xl,a
+1915  0566 a610          	ld	a,#16
+1916  0568 42            	mul	x,a
+1917  0569 9f            	ld	a,xl
+1918  056a 1b01          	add	a,(OFST+0,sp)
+1919  056c c70028        	ld	_bat_mod_dump+40,a
+1920                     ; 474 	bat_mod_dump[0][41]=rs485_cnt;
+1922  056f 55000b0029    	mov	_bat_mod_dump+41,_rs485_cnt
+1923                     ; 485 	can_transmit(0x18e,bat_mod_dump[transmit_cnt_number][0],PUT_LB_TM1+transmit_cnt_number,
+1923                     ; 486 	bat_mod_dump[transmit_cnt_number][1],
+1923                     ; 487 	bat_mod_dump[transmit_cnt_number][2],bat_mod_dump[transmit_cnt_number][3],
+1923                     ; 488 	bat_mod_dump[transmit_cnt_number][4],bat_mod_dump[transmit_cnt_number][5],
+1923                     ; 489 	bat_mod_dump[transmit_cnt_number][6]);
+1925  0574 b600          	ld	a,_transmit_cnt_number
+1926  0576 97            	ld	xl,a
+1927  0577 a628          	ld	a,#40
+1928  0579 42            	mul	x,a
+1929  057a d60006        	ld	a,(_bat_mod_dump+6,x)
+1930  057d 88            	push	a
+1931  057e b600          	ld	a,_transmit_cnt_number
+1932  0580 97            	ld	xl,a
+1933  0581 a628          	ld	a,#40
+1934  0583 42            	mul	x,a
+1935  0584 d60005        	ld	a,(_bat_mod_dump+5,x)
+1936  0587 88            	push	a
+1937  0588 b600          	ld	a,_transmit_cnt_number
+1938  058a 97            	ld	xl,a
+1939  058b a628          	ld	a,#40
+1940  058d 42            	mul	x,a
+1941  058e d60004        	ld	a,(_bat_mod_dump+4,x)
+1942  0591 88            	push	a
+1943  0592 b600          	ld	a,_transmit_cnt_number
+1944  0594 97            	ld	xl,a
+1945  0595 a628          	ld	a,#40
+1946  0597 42            	mul	x,a
+1947  0598 d60003        	ld	a,(_bat_mod_dump+3,x)
+1948  059b 88            	push	a
+1949  059c b600          	ld	a,_transmit_cnt_number
+1950  059e 97            	ld	xl,a
+1951  059f a628          	ld	a,#40
+1952  05a1 42            	mul	x,a
+1953  05a2 d60002        	ld	a,(_bat_mod_dump+2,x)
+1954  05a5 88            	push	a
+1955  05a6 b600          	ld	a,_transmit_cnt_number
+1956  05a8 97            	ld	xl,a
+1957  05a9 a628          	ld	a,#40
+1958  05ab 42            	mul	x,a
+1959  05ac d60001        	ld	a,(_bat_mod_dump+1,x)
+1960  05af 88            	push	a
+1961  05b0 b600          	ld	a,_transmit_cnt_number
+1962  05b2 ab18          	add	a,#24
+1963  05b4 88            	push	a
+1964  05b5 b600          	ld	a,_transmit_cnt_number
+1965  05b7 97            	ld	xl,a
+1966  05b8 a628          	ld	a,#40
+1967  05ba 42            	mul	x,a
+1968  05bb d60000        	ld	a,(_bat_mod_dump,x)
+1969  05be 88            	push	a
+1970  05bf ae018e        	ldw	x,#398
+1971  05c2 cd03e8        	call	_can_transmit
+1973  05c5 5b08          	addw	sp,#8
+1974                     ; 490 	can_transmit(0x18e,bat_mod_dump[transmit_cnt_number][7],PUT_LB_TM2+transmit_cnt_number,
+1974                     ; 491 	bat_mod_dump[transmit_cnt_number][8],
+1974                     ; 492 	bat_mod_dump[transmit_cnt_number][9],bat_mod_dump[transmit_cnt_number][10],
+1974                     ; 493 	bat_mod_dump[transmit_cnt_number][11],bat_mod_dump[transmit_cnt_number][12],
+1974                     ; 494 	bat_mod_dump[transmit_cnt_number][13]);
+1976  05c7 b600          	ld	a,_transmit_cnt_number
+1977  05c9 97            	ld	xl,a
+1978  05ca a628          	ld	a,#40
+1979  05cc 42            	mul	x,a
+1980  05cd d6000d        	ld	a,(_bat_mod_dump+13,x)
+1981  05d0 88            	push	a
+1982  05d1 b600          	ld	a,_transmit_cnt_number
+1983  05d3 97            	ld	xl,a
+1984  05d4 a628          	ld	a,#40
+1985  05d6 42            	mul	x,a
+1986  05d7 d6000c        	ld	a,(_bat_mod_dump+12,x)
+1987  05da 88            	push	a
+1988  05db b600          	ld	a,_transmit_cnt_number
+1989  05dd 97            	ld	xl,a
+1990  05de a628          	ld	a,#40
+1991  05e0 42            	mul	x,a
+1992  05e1 d6000b        	ld	a,(_bat_mod_dump+11,x)
+1993  05e4 88            	push	a
+1994  05e5 b600          	ld	a,_transmit_cnt_number
+1995  05e7 97            	ld	xl,a
+1996  05e8 a628          	ld	a,#40
+1997  05ea 42            	mul	x,a
+1998  05eb d6000a        	ld	a,(_bat_mod_dump+10,x)
+1999  05ee 88            	push	a
+2000  05ef b600          	ld	a,_transmit_cnt_number
+2001  05f1 97            	ld	xl,a
+2002  05f2 a628          	ld	a,#40
+2003  05f4 42            	mul	x,a
+2004  05f5 d60009        	ld	a,(_bat_mod_dump+9,x)
+2005  05f8 88            	push	a
+2006  05f9 b600          	ld	a,_transmit_cnt_number
+2007  05fb 97            	ld	xl,a
+2008  05fc a628          	ld	a,#40
+2009  05fe 42            	mul	x,a
+2010  05ff d60008        	ld	a,(_bat_mod_dump+8,x)
+2011  0602 88            	push	a
+2012  0603 b600          	ld	a,_transmit_cnt_number
+2013  0605 ab78          	add	a,#120
+2014  0607 88            	push	a
+2015  0608 b600          	ld	a,_transmit_cnt_number
+2016  060a 97            	ld	xl,a
+2017  060b a628          	ld	a,#40
+2018  060d 42            	mul	x,a
+2019  060e d60007        	ld	a,(_bat_mod_dump+7,x)
+2020  0611 88            	push	a
+2021  0612 ae018e        	ldw	x,#398
+2022  0615 cd03e8        	call	_can_transmit
+2024  0618 5b08          	addw	sp,#8
+2025                     ; 495 	can_transmit(0x18e,bat_mod_dump[transmit_cnt_number][14],PUT_LB_TM3+transmit_cnt_number,
+2025                     ; 496 	bat_mod_dump[transmit_cnt_number][15],
+2025                     ; 497 	bat_mod_dump[transmit_cnt_number][16],bat_mod_dump[transmit_cnt_number][17],
+2025                     ; 498 	bat_mod_dump[transmit_cnt_number][18],bat_mod_dump[transmit_cnt_number][19],
+2025                     ; 499 	bat_mod_dump[transmit_cnt_number][20]);
+2027  061a b600          	ld	a,_transmit_cnt_number
+2028  061c 97            	ld	xl,a
+2029  061d a628          	ld	a,#40
+2030  061f 42            	mul	x,a
+2031  0620 d60014        	ld	a,(_bat_mod_dump+20,x)
+2032  0623 88            	push	a
+2033  0624 b600          	ld	a,_transmit_cnt_number
+2034  0626 97            	ld	xl,a
+2035  0627 a628          	ld	a,#40
+2036  0629 42            	mul	x,a
+2037  062a d60013        	ld	a,(_bat_mod_dump+19,x)
+2038  062d 88            	push	a
+2039  062e b600          	ld	a,_transmit_cnt_number
+2040  0630 97            	ld	xl,a
+2041  0631 a628          	ld	a,#40
+2042  0633 42            	mul	x,a
+2043  0634 d60012        	ld	a,(_bat_mod_dump+18,x)
+2044  0637 88            	push	a
+2045  0638 b600          	ld	a,_transmit_cnt_number
+2046  063a 97            	ld	xl,a
+2047  063b a628          	ld	a,#40
+2048  063d 42            	mul	x,a
+2049  063e d60011        	ld	a,(_bat_mod_dump+17,x)
+2050  0641 88            	push	a
+2051  0642 b600          	ld	a,_transmit_cnt_number
+2052  0644 97            	ld	xl,a
+2053  0645 a628          	ld	a,#40
+2054  0647 42            	mul	x,a
+2055  0648 d60010        	ld	a,(_bat_mod_dump+16,x)
+2056  064b 88            	push	a
+2057  064c b600          	ld	a,_transmit_cnt_number
+2058  064e 97            	ld	xl,a
+2059  064f a628          	ld	a,#40
+2060  0651 42            	mul	x,a
+2061  0652 d6000f        	ld	a,(_bat_mod_dump+15,x)
+2062  0655 88            	push	a
+2063  0656 b600          	ld	a,_transmit_cnt_number
+2064  0658 ab38          	add	a,#56
+2065  065a 88            	push	a
+2066  065b b600          	ld	a,_transmit_cnt_number
+2067  065d 97            	ld	xl,a
+2068  065e a628          	ld	a,#40
+2069  0660 42            	mul	x,a
+2070  0661 d6000e        	ld	a,(_bat_mod_dump+14,x)
+2071  0664 88            	push	a
+2072  0665 ae018e        	ldw	x,#398
+2073  0668 cd03e8        	call	_can_transmit
+2075  066b 5b08          	addw	sp,#8
+2076                     ; 500 	can_transmit(0x18e,bat_mod_dump[transmit_cnt_number][21],PUT_LB_TM4+transmit_cnt_number,
+2076                     ; 501 	bat_mod_dump[transmit_cnt_number][22],
+2076                     ; 502 	bat_mod_dump[transmit_cnt_number][23],bat_mod_dump[transmit_cnt_number][24],
+2076                     ; 503 	bat_mod_dump[transmit_cnt_number][25],bat_mod_dump[transmit_cnt_number][26],
+2076                     ; 504 	bat_mod_dump[transmit_cnt_number][27]);
+2078  066d b600          	ld	a,_transmit_cnt_number
+2079  066f 97            	ld	xl,a
+2080  0670 a628          	ld	a,#40
+2081  0672 42            	mul	x,a
+2082  0673 d6001b        	ld	a,(_bat_mod_dump+27,x)
+2083  0676 88            	push	a
+2084  0677 b600          	ld	a,_transmit_cnt_number
+2085  0679 97            	ld	xl,a
+2086  067a a628          	ld	a,#40
+2087  067c 42            	mul	x,a
+2088  067d d6001a        	ld	a,(_bat_mod_dump+26,x)
+2089  0680 88            	push	a
+2090  0681 b600          	ld	a,_transmit_cnt_number
+2091  0683 97            	ld	xl,a
+2092  0684 a628          	ld	a,#40
+2093  0686 42            	mul	x,a
+2094  0687 d60019        	ld	a,(_bat_mod_dump+25,x)
+2095  068a 88            	push	a
+2096  068b b600          	ld	a,_transmit_cnt_number
+2097  068d 97            	ld	xl,a
+2098  068e a628          	ld	a,#40
+2099  0690 42            	mul	x,a
+2100  0691 d60018        	ld	a,(_bat_mod_dump+24,x)
+2101  0694 88            	push	a
+2102  0695 b600          	ld	a,_transmit_cnt_number
+2103  0697 97            	ld	xl,a
+2104  0698 a628          	ld	a,#40
+2105  069a 42            	mul	x,a
+2106  069b d60017        	ld	a,(_bat_mod_dump+23,x)
+2107  069e 88            	push	a
+2108  069f b600          	ld	a,_transmit_cnt_number
+2109  06a1 97            	ld	xl,a
+2110  06a2 a628          	ld	a,#40
+2111  06a4 42            	mul	x,a
+2112  06a5 d60016        	ld	a,(_bat_mod_dump+22,x)
+2113  06a8 88            	push	a
+2114  06a9 b600          	ld	a,_transmit_cnt_number
+2115  06ab ab48          	add	a,#72
+2116  06ad 88            	push	a
+2117  06ae b600          	ld	a,_transmit_cnt_number
+2118  06b0 97            	ld	xl,a
+2119  06b1 a628          	ld	a,#40
+2120  06b3 42            	mul	x,a
+2121  06b4 d60015        	ld	a,(_bat_mod_dump+21,x)
+2122  06b7 88            	push	a
+2123  06b8 ae018e        	ldw	x,#398
+2124  06bb cd03e8        	call	_can_transmit
+2126  06be 5b08          	addw	sp,#8
+2127                     ; 505 	can_transmit(0x18e,bat_mod_dump[transmit_cnt_number][28],PUT_LB_TM5+transmit_cnt_number,
+2127                     ; 506 	bat_mod_dump[transmit_cnt_number][29],
+2127                     ; 507 	bat_mod_dump[transmit_cnt_number][30],bat_mod_dump[transmit_cnt_number][31],
+2127                     ; 508 	bat_mod_dump[transmit_cnt_number][32],bat_mod_dump[transmit_cnt_number][33],
+2127                     ; 509 	bat_mod_dump[transmit_cnt_number][34]);
+2129  06c0 b600          	ld	a,_transmit_cnt_number
+2130  06c2 97            	ld	xl,a
+2131  06c3 a628          	ld	a,#40
+2132  06c5 42            	mul	x,a
+2133  06c6 d60022        	ld	a,(_bat_mod_dump+34,x)
+2134  06c9 88            	push	a
+2135  06ca b600          	ld	a,_transmit_cnt_number
+2136  06cc 97            	ld	xl,a
+2137  06cd a628          	ld	a,#40
+2138  06cf 42            	mul	x,a
+2139  06d0 d60021        	ld	a,(_bat_mod_dump+33,x)
+2140  06d3 88            	push	a
+2141  06d4 b600          	ld	a,_transmit_cnt_number
+2142  06d6 97            	ld	xl,a
+2143  06d7 a628          	ld	a,#40
+2144  06d9 42            	mul	x,a
+2145  06da d60020        	ld	a,(_bat_mod_dump+32,x)
+2146  06dd 88            	push	a
+2147  06de b600          	ld	a,_transmit_cnt_number
+2148  06e0 97            	ld	xl,a
+2149  06e1 a628          	ld	a,#40
+2150  06e3 42            	mul	x,a
+2151  06e4 d6001f        	ld	a,(_bat_mod_dump+31,x)
+2152  06e7 88            	push	a
+2153  06e8 b600          	ld	a,_transmit_cnt_number
+2154  06ea 97            	ld	xl,a
+2155  06eb a628          	ld	a,#40
+2156  06ed 42            	mul	x,a
+2157  06ee d6001e        	ld	a,(_bat_mod_dump+30,x)
+2158  06f1 88            	push	a
+2159  06f2 b600          	ld	a,_transmit_cnt_number
+2160  06f4 97            	ld	xl,a
+2161  06f5 a628          	ld	a,#40
+2162  06f7 42            	mul	x,a
+2163  06f8 d6001d        	ld	a,(_bat_mod_dump+29,x)
+2164  06fb 88            	push	a
+2165  06fc b600          	ld	a,_transmit_cnt_number
+2166  06fe ab58          	add	a,#88
+2167  0700 88            	push	a
+2168  0701 b600          	ld	a,_transmit_cnt_number
+2169  0703 97            	ld	xl,a
+2170  0704 a628          	ld	a,#40
+2171  0706 42            	mul	x,a
+2172  0707 d6001c        	ld	a,(_bat_mod_dump+28,x)
+2173  070a 88            	push	a
+2174  070b ae018e        	ldw	x,#398
+2175  070e cd03e8        	call	_can_transmit
+2177  0711 5b08          	addw	sp,#8
+2178                     ; 510 	can_transmit(0x18e,bat_mod_dump[transmit_cnt_number][35],PUT_LB_TM6+transmit_cnt_number,
+2178                     ; 511 	bat_mod_dump[transmit_cnt_number][36],
+2178                     ; 512 	bat_mod_dump[transmit_cnt_number][37],bat_mod_dump[transmit_cnt_number][38],
+2178                     ; 513 	bat_mod_dump[transmit_cnt_number][39],bat_mod_dump[transmit_cnt_number][40],
+2178                     ; 514 	bat_mod_dump[transmit_cnt_number][41]);
+2180  0713 b600          	ld	a,_transmit_cnt_number
+2181  0715 97            	ld	xl,a
+2182  0716 a628          	ld	a,#40
+2183  0718 42            	mul	x,a
+2184  0719 d60029        	ld	a,(_bat_mod_dump+41,x)
+2185  071c 88            	push	a
+2186  071d b600          	ld	a,_transmit_cnt_number
+2187  071f 97            	ld	xl,a
+2188  0720 a628          	ld	a,#40
+2189  0722 42            	mul	x,a
+2190  0723 d60028        	ld	a,(_bat_mod_dump+40,x)
+2191  0726 88            	push	a
+2192  0727 b600          	ld	a,_transmit_cnt_number
+2193  0729 97            	ld	xl,a
+2194  072a a628          	ld	a,#40
+2195  072c 42            	mul	x,a
+2196  072d d60027        	ld	a,(_bat_mod_dump+39,x)
+2197  0730 88            	push	a
+2198  0731 b600          	ld	a,_transmit_cnt_number
+2199  0733 97            	ld	xl,a
+2200  0734 a628          	ld	a,#40
+2201  0736 42            	mul	x,a
+2202  0737 d60026        	ld	a,(_bat_mod_dump+38,x)
+2203  073a 88            	push	a
+2204  073b b600          	ld	a,_transmit_cnt_number
+2205  073d 97            	ld	xl,a
+2206  073e a628          	ld	a,#40
+2207  0740 42            	mul	x,a
+2208  0741 d60025        	ld	a,(_bat_mod_dump+37,x)
+2209  0744 88            	push	a
+2210  0745 b600          	ld	a,_transmit_cnt_number
+2211  0747 97            	ld	xl,a
+2212  0748 a628          	ld	a,#40
+2213  074a 42            	mul	x,a
+2214  074b d60024        	ld	a,(_bat_mod_dump+36,x)
+2215  074e 88            	push	a
+2216  074f b600          	ld	a,_transmit_cnt_number
+2217  0751 ab68          	add	a,#104
+2218  0753 88            	push	a
+2219  0754 b600          	ld	a,_transmit_cnt_number
+2220  0756 97            	ld	xl,a
+2221  0757 a628          	ld	a,#40
+2222  0759 42            	mul	x,a
+2223  075a d60023        	ld	a,(_bat_mod_dump+35,x)
+2224  075d 88            	push	a
+2225  075e ae018e        	ldw	x,#398
+2226  0761 cd03e8        	call	_can_transmit
+2228  0764 5b08          	addw	sp,#8
+2229                     ; 517      link_cnt=0;
+2231  0766 3f0a          	clr	_link_cnt
+2232                     ; 518      link=ON;
+2234  0768 3555000b      	mov	_link,#85
+2235                     ; 520 	transmit_cnt_number++;
+2237  076c 3c00          	inc	_transmit_cnt_number
+2238                     ; 521 	if(transmit_cnt_number>=7)transmit_cnt_number=0;
+2240  076e b600          	ld	a,_transmit_cnt_number
+2241  0770 a107          	cp	a,#7
+2242  0772 2502          	jrult	L165
+2245  0774 3f00          	clr	_transmit_cnt_number
+2246  0776               L165:
+2247                     ; 531 can_in_an_end:
+2247                     ; 532 bCAN_RX=0;
+2249  0776 3f08          	clr	_bCAN_RX
+2250                     ; 533 }   
+2253  0778 84            	pop	a
+2254  0779 81            	ret
+2277                     ; 537 void t4_init(void){
+2278                     	switch	.text
+2279  077a               _t4_init:
+2283                     ; 538 	TIM4->PSCR = 7;
+2285  077a 35075345      	mov	21317,#7
+2286                     ; 539 	TIM4->ARR= 77;
+2288  077e 354d5346      	mov	21318,#77
+2289                     ; 540 	TIM4->IER|= TIM4_IER_UIE;					// enable break interrupt
+2291  0782 72105341      	bset	21313,#0
+2292                     ; 542 	TIM4->CR1=(TIM4_CR1_URS | TIM4_CR1_CEN | TIM4_CR1_ARPE);	
+2294  0786 35855340      	mov	21312,#133
+2295                     ; 544 }
+2298  078a 81            	ret
+2333                     ; 550 @far @interrupt void TIM4_UPD_Interrupt (void) 
+2333                     ; 551 {
+2335                     	switch	.text
+2336  078b               f_TIM4_UPD_Interrupt:
+2340                     ; 552 TIM4->SR1&=~TIM4_SR1_UIF;
+2342  078b 72115342      	bres	21314,#0
+2343                     ; 555 if(++t0_cnt0>=10)
+2345  078f 3c00          	inc	_t0_cnt0
+2346  0791 b600          	ld	a,_t0_cnt0
+2347  0793 a10a          	cp	a,#10
+2348  0795 253e          	jrult	L126
+2349                     ; 557 	t0_cnt0=0;
+2351  0797 3f00          	clr	_t0_cnt0
+2352                     ; 558 	b100Hz=1;
+2354  0799 72100006      	bset	_b100Hz
+2355                     ; 560 	if(++t0_cnt1>=10)
+2357  079d 3c01          	inc	_t0_cnt1
+2358  079f b601          	ld	a,_t0_cnt1
+2359  07a1 a10a          	cp	a,#10
+2360  07a3 2506          	jrult	L326
+2361                     ; 562 		t0_cnt1=0;
+2363  07a5 3f01          	clr	_t0_cnt1
+2364                     ; 563 		b10Hz=1;
+2366  07a7 72100005      	bset	_b10Hz
+2367  07ab               L326:
+2368                     ; 566 	if(++t0_cnt2>=20)
+2370  07ab 3c02          	inc	_t0_cnt2
+2371  07ad b602          	ld	a,_t0_cnt2
+2372  07af a114          	cp	a,#20
+2373  07b1 2506          	jrult	L526
+2374                     ; 568 		t0_cnt2=0;
+2376  07b3 3f02          	clr	_t0_cnt2
+2377                     ; 569 		b5Hz=1;
+2379  07b5 72100004      	bset	_b5Hz
+2380  07b9               L526:
+2381                     ; 573 	if(++t0_cnt4>=50)
+2383  07b9 3c04          	inc	_t0_cnt4
+2384  07bb b604          	ld	a,_t0_cnt4
+2385  07bd a132          	cp	a,#50
+2386  07bf 2506          	jrult	L726
+2387                     ; 575 		t0_cnt4=0;
+2389  07c1 3f04          	clr	_t0_cnt4
+2390                     ; 576 		b2Hz=1;
+2392  07c3 72100003      	bset	_b2Hz
+2393  07c7               L726:
+2394                     ; 579 	if(++t0_cnt3>=100)
+2396  07c7 3c03          	inc	_t0_cnt3
+2397  07c9 b603          	ld	a,_t0_cnt3
+2398  07cb a164          	cp	a,#100
+2399  07cd 2506          	jrult	L126
+2400                     ; 581 		t0_cnt3=0;
+2402  07cf 3f03          	clr	_t0_cnt3
+2403                     ; 582 		b1Hz=1;
+2405  07d1 72100002      	bset	_b1Hz
+2406  07d5               L126:
+2407                     ; 589 if(tx_stat_cnt)
+2409  07d5 725d0331      	tnz	_tx_stat_cnt
+2410  07d9 270c          	jreq	L336
+2411                     ; 591 	tx_stat_cnt--;
+2413  07db 725a0331      	dec	_tx_stat_cnt
+2414                     ; 592 	if(tx_stat_cnt==0)tx_stat=tsOFF;
+2416  07df 725d0331      	tnz	_tx_stat_cnt
+2417  07e3 2602          	jrne	L336
+2420  07e5 3f05          	clr	_tx_stat
+2421  07e7               L336:
+2422                     ; 607 }
+2425  07e7 80            	iret
+2450                     ; 610 @far @interrupt void CAN_RX_Interrupt (void) 
+2450                     ; 611 {
+2451                     	switch	.text
+2452  07e8               f_CAN_RX_Interrupt:
+2456                     ; 621 CAN->PSR= 7;
+2458  07e8 35075427      	mov	21543,#7
+2459                     ; 630 memcpy(&mess[0], &CAN->Page.RxFIFO.MFMI, 14); // compare the message content
+2461  07ec ae000e        	ldw	x,#14
+2462  07ef               L601:
+2463  07ef d65427        	ld	a,(21543,x)
+2464  07f2 e745          	ld	(_mess-1,x),a
+2465  07f4 5a            	decw	x
+2466  07f5 26f8          	jrne	L601
+2467                     ; 641 bCAN_RX=1;
+2469  07f7 35010008      	mov	_bCAN_RX,#1
+2470                     ; 642 CAN->RFR|=(1<<5);
+2472  07fb 721a5424      	bset	21540,#5
+2473                     ; 644 }
+2476  07ff 80            	iret
+2499                     ; 647 @far @interrupt void CAN_TX_Interrupt (void) 
+2499                     ; 648 {
+2500                     	switch	.text
+2501  0800               f_CAN_TX_Interrupt:
+2505                     ; 649 	if((CAN->TSR)&(1<<0))
+2507  0800 c65422        	ld	a,21538
+2508  0803 a501          	bcp	a,#1
+2509  0805 2708          	jreq	L756
+2510                     ; 651 	bTX_FREE=1;	
+2512  0807 35010007      	mov	_bTX_FREE,#1
+2513                     ; 653 	CAN->TSR|=(1<<0);
+2515  080b 72105422      	bset	21538,#0
+2516  080f               L756:
+2517                     ; 655 }
+2520  080f 80            	iret
+2558                     ; 659 @far @interrupt void UART1TxInterrupt (void) 
+2558                     ; 660 {
+2559                     	switch	.text
+2560  0810               f_UART1TxInterrupt:
+2562       00000001      OFST:	set	1
+2563  0810 88            	push	a
+2566                     ; 663 tx_status=UART1->SR;
+2568  0811 c65230        	ld	a,21040
+2569  0814 6b01          	ld	(OFST+0,sp),a
+2570                     ; 665 if (tx_status & (UART1_SR_TXE))
+2572  0816 7b01          	ld	a,(OFST+0,sp)
+2573  0818 a580          	bcp	a,#128
+2574  081a 272b          	jreq	L776
+2575                     ; 667 	if (tx_counter1)
+2577  081c 3d31          	tnz	_tx_counter1
+2578  081e 271b          	jreq	L107
+2579                     ; 669 		--tx_counter1;
+2581  0820 3a31          	dec	_tx_counter1
+2582                     ; 670 		UART1->DR=tx_buffer1[tx_rd_index1];
+2584  0822 5f            	clrw	x
+2585  0823 b62f          	ld	a,_tx_rd_index1
+2586  0825 2a01          	jrpl	L411
+2587  0827 53            	cplw	x
+2588  0828               L411:
+2589  0828 97            	ld	xl,a
+2590  0829 d60000        	ld	a,(_tx_buffer1,x)
+2591  082c c75231        	ld	21041,a
+2592                     ; 671 		if (++tx_rd_index1 == TX_BUFFER_SIZE1) tx_rd_index1=0;
+2594  082f 3c2f          	inc	_tx_rd_index1
+2595  0831 b62f          	ld	a,_tx_rd_index1
+2596  0833 a132          	cp	a,#50
+2597  0835 2610          	jrne	L776
+2600  0837 3f2f          	clr	_tx_rd_index1
+2601  0839 200c          	jra	L776
+2602  083b               L107:
+2603                     ; 675 		tx_stat_cnt=3;
+2605  083b 35030331      	mov	_tx_stat_cnt,#3
+2606                     ; 676 			bOUT_FREE=1;
+2608  083f 35010028      	mov	_bOUT_FREE,#1
+2609                     ; 677 			UART1->CR2&= ~UART1_CR2_TIEN;
+2611  0843 721f5235      	bres	21045,#7
+2612  0847               L776:
+2613                     ; 681 if (tx_status & (UART1_SR_TC))
+2615  0847 7b01          	ld	a,(OFST+0,sp)
+2616  0849 a540          	bcp	a,#64
+2617  084b 2708          	jreq	L707
+2618                     ; 683 	GPIOB->ODR&=~(1<<7);
+2620  084d 721f5005      	bres	20485,#7
+2621                     ; 684 	UART1->SR&=~UART1_SR_TC;
+2623  0851 721d5230      	bres	21040,#6
+2624  0855               L707:
+2625                     ; 686 }
+2628  0855 84            	pop	a
+2629  0856 80            	iret
+2683                     ; 689 @far @interrupt void UART1RxInterrupt (void) 
+2683                     ; 690 {
+2684                     	switch	.text
+2685  0857               f_UART1RxInterrupt:
+2687       00000003      OFST:	set	3
+2688  0857 5203          	subw	sp,#3
+2691                     ; 693 rx_status=UART1->SR;
+2693  0859 c65230        	ld	a,21040
+2694  085c 6b02          	ld	(OFST-1,sp),a
+2695                     ; 694 rx_data=UART1->DR;
+2697  085e c65231        	ld	a,21041
+2698  0861 6b03          	ld	(OFST+0,sp),a
+2699                     ; 696 if (rx_status & (UART1_SR_RXNE))
+2701  0863 7b02          	ld	a,(OFST-1,sp)
+2702  0865 a520          	bcp	a,#32
+2703  0867 2739          	jreq	L737
+2704                     ; 699 temp=rx_data;
+2706                     ; 700 rx_buffer[rs485_rx_cnt]=rx_data;
+2708  0869 7b03          	ld	a,(OFST+0,sp)
+2709  086b be02          	ldw	x,_rs485_rx_cnt
+2710  086d d70032        	ld	(_rx_buffer,x),a
+2711                     ; 701 rs485_rx_cnt++;
+2713  0870 be02          	ldw	x,_rs485_rx_cnt
+2714  0872 1c0001        	addw	x,#1
+2715  0875 bf02          	ldw	_rs485_rx_cnt,x
+2716                     ; 717 	if((rx_data==0x0d)&&(rs485_rx_cnt==298))bRX485=1;
+2718  0877 7b03          	ld	a,(OFST+0,sp)
+2719  0879 a10d          	cp	a,#13
+2720  087b 260b          	jrne	L147
+2722  087d be02          	ldw	x,_rs485_rx_cnt
+2723  087f a3012a        	cpw	x,#298
+2724  0882 2604          	jrne	L147
+2727  0884 35010001      	mov	_bRX485,#1
+2728  0888               L147:
+2729                     ; 718 	if((rx_data==0x0d)&&(rs485_rx_cnt==264))bRX485=2;
+2731  0888 7b03          	ld	a,(OFST+0,sp)
+2732  088a a10d          	cp	a,#13
+2733  088c 260b          	jrne	L347
+2735  088e be02          	ldw	x,_rs485_rx_cnt
+2736  0890 a30108        	cpw	x,#264
+2737  0893 2604          	jrne	L347
+2740  0895 35020001      	mov	_bRX485,#2
+2741  0899               L347:
+2742                     ; 720 	if(rx_data==0x0d)rs485_rx_cnt=0;	
+2744  0899 7b03          	ld	a,(OFST+0,sp)
+2745  089b a10d          	cp	a,#13
+2746  089d 2603          	jrne	L737
+2749  089f 5f            	clrw	x
+2750  08a0 bf02          	ldw	_rs485_rx_cnt,x
+2751  08a2               L737:
+2752                     ; 725 }
+2755  08a2 5b03          	addw	sp,#3
+2756  08a4 80            	iret
+2798                     ; 734 main()
+2798                     ; 735 {
+2800                     	switch	.text
+2801  08a5               _main:
+2805                     ; 736 CLK->ECKR|=1;
+2807  08a5 721050c1      	bset	20673,#0
+2809  08a9               L167:
+2810                     ; 737 while((CLK->ECKR & 2) == 0);
+2812  08a9 c650c1        	ld	a,20673
+2813  08ac a502          	bcp	a,#2
+2814  08ae 27f9          	jreq	L167
+2815                     ; 738 CLK->SWCR|=2;
+2817  08b0 721250c5      	bset	20677,#1
+2818                     ; 739 CLK->SWR=0xB4;
+2820  08b4 35b450c4      	mov	20676,#180
+2821                     ; 742 t4_init();
+2823  08b8 cd077a        	call	_t4_init
+2825                     ; 744 		GPIOG->DDR|=(1<<0);
+2827  08bb 72105020      	bset	20512,#0
+2828                     ; 745 		GPIOG->CR1|=(1<<0);
+2830  08bf 72105021      	bset	20513,#0
+2831                     ; 746 		GPIOG->CR2&=~(1<<0);	
+2833  08c3 72115022      	bres	20514,#0
+2834                     ; 749 		GPIOG->DDR&=~(1<<1);
+2836  08c7 72135020      	bres	20512,#1
+2837                     ; 750 		GPIOG->CR1|=(1<<1);
+2839  08cb 72125021      	bset	20513,#1
+2840                     ; 751 		GPIOG->CR2&=~(1<<1);
+2842  08cf 72135022      	bres	20514,#1
+2843                     ; 753 init_CAN();
+2845  08d3 cd0391        	call	_init_CAN
+2847                     ; 761 uart1_init();
+2849  08d6 cd003c        	call	_uart1_init
+2851                     ; 763 adress=19;
+2853  08d9 35130119      	mov	_adress,#19
+2854                     ; 765 bat_mod_dump[0][5]=1;
+2856  08dd 35010005      	mov	_bat_mod_dump+5,#1
+2857                     ; 766 bat_mod_dump[1][5]=2;
+2859  08e1 3502002d      	mov	_bat_mod_dump+45,#2
+2860                     ; 767 bat_mod_dump[2][5]=3;
+2862  08e5 35030055      	mov	_bat_mod_dump+85,#3
+2863                     ; 768 bat_mod_dump[3][5]=4;
+2865  08e9 3504007d      	mov	_bat_mod_dump+125,#4
+2866                     ; 769 bat_mod_dump[4][5]=5;
+2868  08ed 350500a5      	mov	_bat_mod_dump+165,#5
+2869                     ; 770 bat_mod_dump[5][5]=6;
+2871  08f1 350600cd      	mov	_bat_mod_dump+205,#6
+2872                     ; 771 bat_mod_dump[6][5]=7;
+2874  08f5 350700f5      	mov	_bat_mod_dump+245,#7
+2875                     ; 773 enableInterrupts();
+2878  08f9 9a            rim
+2880  08fa               L567:
+2881                     ; 777 	if(bRX485)
+2883  08fa 3d01          	tnz	_bRX485
+2884  08fc 2703          	jreq	L177
+2885                     ; 779 		rx485_in_an();
+2887  08fe cd029c        	call	_rx485_in_an
+2889  0901               L177:
+2890                     ; 782 	if(bCAN_RX)
+2892  0901 3d08          	tnz	_bCAN_RX
+2893  0903 2705          	jreq	L377
+2894                     ; 784 		bCAN_RX=0;
+2896  0905 3f08          	clr	_bCAN_RX
+2897                     ; 785 		can_in_an();
+2899  0907 cd04dd        	call	_can_in_an
+2901  090a               L377:
+2902                     ; 794 	if(b100Hz)
+2904                     	btst	_b100Hz
+2905  090f 2404          	jruge	L577
+2906                     ; 796 		b100Hz=0;
+2908  0911 72110006      	bres	_b100Hz
+2909  0915               L577:
+2910                     ; 799 	if(b10Hz)
+2912                     	btst	_b10Hz
+2913  091a 2407          	jruge	L777
+2914                     ; 801 		b10Hz=0;
+2916  091c 72110005      	bres	_b10Hz
+2917                     ; 803 			can_tx_hndl();
+2919  0920 cd0476        	call	_can_tx_hndl
+2921  0923               L777:
+2922                     ; 809 	if(b2Hz)
+2924                     	btst	_b2Hz
+2925  0928 2503          	jrult	L221
+2926  092a cc09f4        	jp	L1001
+2927  092d               L221:
+2928                     ; 811 		b2Hz=0;
+2930  092d 72110003      	bres	_b2Hz
+2931                     ; 813 		if(bBAT_REQ)
+2933                     	btst	_bBAT_REQ
+2934  0936 245f          	jruge	L3001
+2935                     ; 815 			bBAT_REQ=0;
+2937  0938 72110001      	bres	_bBAT_REQ
+2938                     ; 817 			rs485_out_buff[0]=0x7e;
+2940  093c 357e0032      	mov	_rs485_out_buff,#126
+2941                     ; 818 			rs485_out_buff[1]=0x31;
+2943  0940 35310033      	mov	_rs485_out_buff+1,#49
+2944                     ; 819 			rs485_out_buff[2]=0x31;
+2946  0944 35310034      	mov	_rs485_out_buff+2,#49
+2947                     ; 820 			rs485_out_buff[3]=0x30;
+2949  0948 35300035      	mov	_rs485_out_buff+3,#48
+2950                     ; 821 			rs485_out_buff[4]=0x31;
+2952  094c 35310036      	mov	_rs485_out_buff+4,#49
+2953                     ; 822 			rs485_out_buff[5]=0x44;
+2955  0950 35440037      	mov	_rs485_out_buff+5,#68
+2956                     ; 823 			rs485_out_buff[6]=0x30;
+2958  0954 35300038      	mov	_rs485_out_buff+6,#48
+2959                     ; 824 			rs485_out_buff[7]=0x38;
+2961  0958 35380039      	mov	_rs485_out_buff+7,#56
+2962                     ; 825 			rs485_out_buff[8]=0x32;
+2964  095c 3532003a      	mov	_rs485_out_buff+8,#50
+2965                     ; 826 			rs485_out_buff[9]=0x45;
+2967  0960 3545003b      	mov	_rs485_out_buff+9,#69
+2968                     ; 827 			rs485_out_buff[10]=0x30;
+2970  0964 3530003c      	mov	_rs485_out_buff+10,#48
+2971                     ; 828 			rs485_out_buff[11]=0x30;
+2973  0968 3530003d      	mov	_rs485_out_buff+11,#48
+2974                     ; 829 			rs485_out_buff[12]=0x32;
+2976  096c 3532003e      	mov	_rs485_out_buff+12,#50
+2977                     ; 830 			rs485_out_buff[13]=0x30;
+2979  0970 3530003f      	mov	_rs485_out_buff+13,#48
+2980                     ; 831 			rs485_out_buff[14]=0x31;
+2982  0974 35310040      	mov	_rs485_out_buff+14,#49
+2983                     ; 832 			rs485_out_buff[15]=0x46;
+2985  0978 35460041      	mov	_rs485_out_buff+15,#70
+2986                     ; 833 			rs485_out_buff[16]=0x44;
+2988  097c 35440042      	mov	_rs485_out_buff+16,#68
+2989                     ; 834 			rs485_out_buff[17]=0x32;
+2991  0980 35320043      	mov	_rs485_out_buff+17,#50
+2992                     ; 835 			rs485_out_buff[18]=0x37;
+2994  0984 35370044      	mov	_rs485_out_buff+18,#55
+2995                     ; 836 			rs485_out_buff[19]=0x0d;
+2997  0988 350d0045      	mov	_rs485_out_buff+19,#13
+2998                     ; 838 			uart1_out_adr(rs485_out_buff,20);
+3000  098c 4b14          	push	#20
+3001  098e ae0032        	ldw	x,#_rs485_out_buff
+3002  0991 cd00c3        	call	_uart1_out_adr
+3004  0994 84            	pop	a
+3006  0995 205d          	jra	L1001
+3007  0997               L3001:
+3008                     ; 842 			bBAT_REQ=1;
+3010  0997 72100001      	bset	_bBAT_REQ
+3011                     ; 844 			rs485_out_buff[0]=0x7e;
+3013  099b 357e0032      	mov	_rs485_out_buff,#126
+3014                     ; 845 			rs485_out_buff[1]=0x31;
+3016  099f 35310033      	mov	_rs485_out_buff+1,#49
+3017                     ; 846 			rs485_out_buff[2]=0x31;
+3019  09a3 35310034      	mov	_rs485_out_buff+2,#49
+3020                     ; 847 			rs485_out_buff[3]=0x30;
+3022  09a7 35300035      	mov	_rs485_out_buff+3,#48
+3023                     ; 848 			rs485_out_buff[4]=0x31;
+3025  09ab 35310036      	mov	_rs485_out_buff+4,#49
+3026                     ; 849 			rs485_out_buff[5]=0x44;
+3028  09af 35440037      	mov	_rs485_out_buff+5,#68
+3029                     ; 850 			rs485_out_buff[6]=0x30;
+3031  09b3 35300038      	mov	_rs485_out_buff+6,#48
+3032                     ; 851 			rs485_out_buff[7]=0x38;
+3034  09b7 35380039      	mov	_rs485_out_buff+7,#56
+3035                     ; 852 			rs485_out_buff[8]=0x33;
+3037  09bb 3533003a      	mov	_rs485_out_buff+8,#51
+3038                     ; 853 			rs485_out_buff[9]=0x45;
+3040  09bf 3545003b      	mov	_rs485_out_buff+9,#69
+3041                     ; 854 			rs485_out_buff[10]=0x30;
+3043  09c3 3530003c      	mov	_rs485_out_buff+10,#48
+3044                     ; 855 			rs485_out_buff[11]=0x30;
+3046  09c7 3530003d      	mov	_rs485_out_buff+11,#48
+3047                     ; 856 			rs485_out_buff[12]=0x32;
+3049  09cb 3532003e      	mov	_rs485_out_buff+12,#50
+3050                     ; 857 			rs485_out_buff[13]=0x30;
+3052  09cf 3530003f      	mov	_rs485_out_buff+13,#48
+3053                     ; 858 			rs485_out_buff[14]=0x31;
+3055  09d3 35310040      	mov	_rs485_out_buff+14,#49
+3056                     ; 859 			rs485_out_buff[15]=0x46;
+3058  09d7 35460041      	mov	_rs485_out_buff+15,#70
+3059                     ; 860 			rs485_out_buff[16]=0x44;
+3061  09db 35440042      	mov	_rs485_out_buff+16,#68
+3062                     ; 861 			rs485_out_buff[17]=0x32;
+3064  09df 35320043      	mov	_rs485_out_buff+17,#50
+3065                     ; 862 			rs485_out_buff[18]=0x36;
+3067  09e3 35360044      	mov	_rs485_out_buff+18,#54
+3068                     ; 863 			rs485_out_buff[19]=0x0d;
+3070  09e7 350d0045      	mov	_rs485_out_buff+19,#13
+3071                     ; 865 			uart1_out_adr(rs485_out_buff,20);
+3073  09eb 4b14          	push	#20
+3074  09ed ae0032        	ldw	x,#_rs485_out_buff
+3075  09f0 cd00c3        	call	_uart1_out_adr
+3077  09f3 84            	pop	a
+3078  09f4               L1001:
+3079                     ; 869 	if(b1Hz)
+3081                     	btst	_b1Hz
+3082  09f9 2503          	jrult	L421
+3083  09fb cc08fa        	jp	L567
+3084  09fe               L421:
+3085                     ; 871 		b1Hz=0;
+3087  09fe 72110002      	bres	_b1Hz
+3088                     ; 880 		if(++rs485_cnt>=100)
+3090  0a02 3c0b          	inc	_rs485_cnt
+3091  0a04 b60b          	ld	a,_rs485_cnt
+3092  0a06 a164          	cp	a,#100
+3093  0a08 2403          	jruge	L621
+3094  0a0a cc08fa        	jp	L567
+3095  0a0d               L621:
+3096                     ; 882 			rs485_cnt=100;
+3098  0a0d 3564000b      	mov	_rs485_cnt,#100
+3099                     ; 883 			bRS485ERR=1;
+3101  0a11 72100000      	bset	_bRS485ERR
+3102  0a15 acfa08fa      	jpf	L567
+3682                     	xdef	_main
+3683                     	xdef	f_UART1RxInterrupt
+3684                     	xdef	f_UART1TxInterrupt
+3685                     	xdef	f_CAN_TX_Interrupt
+3686                     	xdef	f_CAN_RX_Interrupt
+3687                     	xdef	f_TIM4_UPD_Interrupt
+3688                     	xdef	_t4_init
+3689                     	xdef	_can_in_an
+3690                     	xdef	_can_tx_hndl
+3691                     	xdef	_can_transmit
+3692                     	xdef	_init_CAN
+3693                     	xdef	_rx485_in_an
+3694                     	xdef	_str2int
+3695                     	xdef	_ascii2hex
+3696                     	xdef	_ascii2halFhex
+3697                     	xdef	_uart1_out_adr
+3698                     	xdef	_putchar1
+3699                     	xdef	_uart1_init
+3700                     	xdef	_gran
+3701                     	xdef	_gran_char
+3702                     	switch	.bss
+3703  0000               _bat_mod_dump:
+3704  0000 000000000000  	ds.b	280
+3705                     	xdef	_bat_mod_dump
+3706                     	switch	.ubsct
+3707  0000               _transmit_cnt_number:
+3708  0000 00            	ds.b	1
+3709                     	xdef	_transmit_cnt_number
+3710                     .bit:	section	.data,bit
+3711  0000               _bRS485ERR:
+3712  0000 00            	ds.b	1
+3713                     	xdef	_bRS485ERR
+3714                     	xdef	_rs485_cnt
+3715                     	switch	.ubsct
+3716  0001               _bRX485:
+3717  0001 00            	ds.b	1
+3718                     	xdef	_bRX485
+3719  0002               _rs485_rx_cnt:
+3720  0002 0000          	ds.b	2
+3721                     	xdef	_rs485_rx_cnt
+3722  0004               _plazma_int:
+3723  0004 000000000000  	ds.b	6
+3724                     	xdef	_plazma_int
+3725  000a               _link_cnt:
+3726  000a 00            	ds.b	1
+3727                     	xdef	_link_cnt
+3728  000b               _link:
+3729  000b 00            	ds.b	1
+3730                     	xdef	_link
+3731                     	switch	.bss
+3732  0118               _adress_error:
+3733  0118 00            	ds.b	1
+3734                     	xdef	_adress_error
+3735  0119               _adress:
+3736  0119 00            	ds.b	1
+3737                     	xdef	_adress
+3738  011a               _adr:
+3739  011a 000000        	ds.b	3
+3740                     	xdef	_adr
+3741                     	xdef	_adr_drv_stat
+3742                     	xdef	_led_ind
 3743                     	switch	.ubsct
-3744  0001               _bRX485:
-3745  0001 00            	ds.b	1
-3746                     	xdef	_bRX485
-3747  0002               _rs485_rx_cnt:
-3748  0002 0000          	ds.b	2
-3749                     	xdef	_rs485_rx_cnt
-3750  0004               _plazma_int:
-3751  0004 000000000000  	ds.b	6
-3752                     	xdef	_plazma_int
-3753  000a               _link_cnt:
-3754  000a 00            	ds.b	1
-3755                     	xdef	_link_cnt
-3756  000b               _link:
-3757  000b 00            	ds.b	1
-3758                     	xdef	_link
+3744  000c               _led_ind_cnt:
+3745  000c 00            	ds.b	1
+3746                     	xdef	_led_ind_cnt
+3747  000d               _adc_plazma:
+3748  000d 000000000000  	ds.b	10
+3749                     	xdef	_adc_plazma
+3750  0017               _adc_plazma_short:
+3751  0017 0000          	ds.b	2
+3752                     	xdef	_adc_plazma_short
+3753  0019               _adc_cnt:
+3754  0019 00            	ds.b	1
+3755                     	xdef	_adc_cnt
+3756  001a               _adc_ch:
+3757  001a 00            	ds.b	1
+3758                     	xdef	_adc_ch
 3759                     	switch	.bss
-3760  0118               _adress_error:
-3761  0118 00            	ds.b	1
-3762                     	xdef	_adress_error
-3763  0119               _adress:
-3764  0119 00            	ds.b	1
-3765                     	xdef	_adress
-3766  011a               _adr:
-3767  011a 000000        	ds.b	3
-3768                     	xdef	_adr
-3769                     	xdef	_adr_drv_stat
-3770                     	xdef	_led_ind
-3771                     	switch	.ubsct
-3772  000c               _led_ind_cnt:
-3773  000c 00            	ds.b	1
-3774                     	xdef	_led_ind_cnt
-3775  000d               _adc_plazma:
-3776  000d 000000000000  	ds.b	10
-3777                     	xdef	_adc_plazma
-3778  0017               _adc_plazma_short:
-3779  0017 0000          	ds.b	2
-3780                     	xdef	_adc_plazma_short
-3781  0019               _adc_cnt:
-3782  0019 00            	ds.b	1
-3783                     	xdef	_adc_cnt
-3784  001a               _adc_ch:
-3785  001a 00            	ds.b	1
-3786                     	xdef	_adc_ch
-3787                     	switch	.bss
-3788  011d               _adc_buff_:
-3789  011d 000000000000  	ds.b	20
-3790                     	xdef	_adc_buff_
-3791  0131               _adc_buff:
-3792  0131 000000000000  	ds.b	320
-3793                     	xdef	_adc_buff
-3794                     	switch	.ubsct
-3795  001b               _T:
-3796  001b 00            	ds.b	1
-3797                     	xdef	_T
-3798  001c               _Udb:
-3799  001c 0000          	ds.b	2
-3800                     	xdef	_Udb
-3801  001e               _Ui:
-3802  001e 0000          	ds.b	2
-3803                     	xdef	_Ui
-3804  0020               _Un:
-3805  0020 0000          	ds.b	2
-3806                     	xdef	_Un
-3807  0022               _I:
-3808  0022 0000          	ds.b	2
-3809                     	xdef	_I
-3810  0024               _can_error_cnt:
-3811  0024 00            	ds.b	1
-3812                     	xdef	_can_error_cnt
-3813                     	xdef	_bCAN_RX
-3814  0025               _tx_busy_cnt:
-3815  0025 00            	ds.b	1
-3816                     	xdef	_tx_busy_cnt
-3817                     	xdef	_bTX_FREE
-3818  0026               _can_buff_rd_ptr:
-3819  0026 00            	ds.b	1
-3820                     	xdef	_can_buff_rd_ptr
-3821  0027               _can_buff_wr_ptr:
-3822  0027 00            	ds.b	1
-3823                     	xdef	_can_buff_wr_ptr
-3824                     	switch	.bss
-3825  0271               _can_out_buff:
-3826  0271 000000000000  	ds.b	192
-3827                     	xdef	_can_out_buff
-3828                     	switch	.ubsct
-3829  0028               _bOUT_FREE:
-3830  0028 00            	ds.b	1
-3831                     	xdef	_bOUT_FREE
-3832                     	xdef	_tx_wd_cnt
-3833                     	switch	.bss
-3834  0331               _tx_stat_cnt:
-3835  0331 00            	ds.b	1
-3836                     	xdef	_tx_stat_cnt
-3837                     	switch	.ubsct
-3838  0029               _rx_rd_index1:
-3839  0029 0000          	ds.b	2
-3840                     	xdef	_rx_rd_index1
-3841  002b               _rx_wr_index1:
-3842  002b 0000          	ds.b	2
-3843                     	xdef	_rx_wr_index1
-3844  002d               _rx_counter1:
-3845  002d 0000          	ds.b	2
-3846                     	xdef	_rx_counter1
-3847                     	xdef	_rx_buffer
-3848  002f               _tx_rd_index1:
-3849  002f 00            	ds.b	1
-3850                     	xdef	_tx_rd_index1
-3851  0030               _tx_wr_index1:
-3852  0030 00            	ds.b	1
-3853                     	xdef	_tx_wr_index1
-3854  0031               _tx_counter1:
-3855  0031 00            	ds.b	1
-3856                     	xdef	_tx_counter1
-3857                     	xdef	_tx_buffer1
-3858  0032               _rs485_out_buff:
-3859  0032 000000000000  	ds.b	20
-3860                     	xdef	_rs485_out_buff
-3861  0046               _mess:
-3862  0046 000000000000  	ds.b	14
-3863                     	xdef	_mess
-3864                     	switch	.bit
-3865  0001               _bBAT_REQ:
-3866  0001 00            	ds.b	1
-3867                     	xdef	_bBAT_REQ
-3868  0002               _b1Hz:
-3869  0002 00            	ds.b	1
-3870                     	xdef	_b1Hz
-3871  0003               _b2Hz:
-3872  0003 00            	ds.b	1
-3873                     	xdef	_b2Hz
-3874  0004               _b5Hz:
-3875  0004 00            	ds.b	1
-3876                     	xdef	_b5Hz
-3877  0005               _b10Hz:
-3878  0005 00            	ds.b	1
-3879                     	xdef	_b10Hz
-3880  0006               _b100Hz:
-3881  0006 00            	ds.b	1
-3882                     	xdef	_b100Hz
-3883                     	xdef	_t0_cnt4
-3884                     	xdef	_t0_cnt3
-3885                     	xdef	_t0_cnt2
-3886                     	xdef	_t0_cnt1
-3887                     	xdef	_t0_cnt0
-3888                     	xref	_pow
-3889                     	xref	_isalnum
-3890                     	xdef	_tx_stat
-3891                     	switch	.const
-3892  000a               L704:
-3893  000a 41800000      	dc.w	16768,0
-3894                     	xref.b	c_lreg
-3895                     	xref.b	c_x
-3915                     	xref	c_imul
-3916                     	xref	c_ftoi
-3917                     	xref	c_itof
-3918                     	xref	c_xymvx
-3919                     	xref	c_sdivx
-3920                     	end
+3760  011d               _adc_buff_:
+3761  011d 000000000000  	ds.b	20
+3762                     	xdef	_adc_buff_
+3763  0131               _adc_buff:
+3764  0131 000000000000  	ds.b	320
+3765                     	xdef	_adc_buff
+3766                     	switch	.ubsct
+3767  001b               _T:
+3768  001b 00            	ds.b	1
+3769                     	xdef	_T
+3770  001c               _Udb:
+3771  001c 0000          	ds.b	2
+3772                     	xdef	_Udb
+3773  001e               _Ui:
+3774  001e 0000          	ds.b	2
+3775                     	xdef	_Ui
+3776  0020               _Un:
+3777  0020 0000          	ds.b	2
+3778                     	xdef	_Un
+3779  0022               _I:
+3780  0022 0000          	ds.b	2
+3781                     	xdef	_I
+3782  0024               _can_error_cnt:
+3783  0024 00            	ds.b	1
+3784                     	xdef	_can_error_cnt
+3785                     	xdef	_bCAN_RX
+3786  0025               _tx_busy_cnt:
+3787  0025 00            	ds.b	1
+3788                     	xdef	_tx_busy_cnt
+3789                     	xdef	_bTX_FREE
+3790  0026               _can_buff_rd_ptr:
+3791  0026 00            	ds.b	1
+3792                     	xdef	_can_buff_rd_ptr
+3793  0027               _can_buff_wr_ptr:
+3794  0027 00            	ds.b	1
+3795                     	xdef	_can_buff_wr_ptr
+3796                     	switch	.bss
+3797  0271               _can_out_buff:
+3798  0271 000000000000  	ds.b	192
+3799                     	xdef	_can_out_buff
+3800                     	switch	.ubsct
+3801  0028               _bOUT_FREE:
+3802  0028 00            	ds.b	1
+3803                     	xdef	_bOUT_FREE
+3804                     	xdef	_tx_wd_cnt
+3805                     	switch	.bss
+3806  0331               _tx_stat_cnt:
+3807  0331 00            	ds.b	1
+3808                     	xdef	_tx_stat_cnt
+3809                     	switch	.ubsct
+3810  0029               _rx_rd_index1:
+3811  0029 0000          	ds.b	2
+3812                     	xdef	_rx_rd_index1
+3813  002b               _rx_wr_index1:
+3814  002b 0000          	ds.b	2
+3815                     	xdef	_rx_wr_index1
+3816  002d               _rx_counter1:
+3817  002d 0000          	ds.b	2
+3818                     	xdef	_rx_counter1
+3819                     	xdef	_rx_buffer
+3820  002f               _tx_rd_index1:
+3821  002f 00            	ds.b	1
+3822                     	xdef	_tx_rd_index1
+3823  0030               _tx_wr_index1:
+3824  0030 00            	ds.b	1
+3825                     	xdef	_tx_wr_index1
+3826  0031               _tx_counter1:
+3827  0031 00            	ds.b	1
+3828                     	xdef	_tx_counter1
+3829                     	xdef	_tx_buffer1
+3830  0032               _rs485_out_buff:
+3831  0032 000000000000  	ds.b	20
+3832                     	xdef	_rs485_out_buff
+3833  0046               _mess:
+3834  0046 000000000000  	ds.b	14
+3835                     	xdef	_mess
+3836                     	switch	.bit
+3837  0001               _bBAT_REQ:
+3838  0001 00            	ds.b	1
+3839                     	xdef	_bBAT_REQ
+3840  0002               _b1Hz:
+3841  0002 00            	ds.b	1
+3842                     	xdef	_b1Hz
+3843  0003               _b2Hz:
+3844  0003 00            	ds.b	1
+3845                     	xdef	_b2Hz
+3846  0004               _b5Hz:
+3847  0004 00            	ds.b	1
+3848                     	xdef	_b5Hz
+3849  0005               _b10Hz:
+3850  0005 00            	ds.b	1
+3851                     	xdef	_b10Hz
+3852  0006               _b100Hz:
+3853  0006 00            	ds.b	1
+3854                     	xdef	_b100Hz
+3855                     	xdef	_t0_cnt4
+3856                     	xdef	_t0_cnt3
+3857                     	xdef	_t0_cnt2
+3858                     	xdef	_t0_cnt1
+3859                     	xdef	_t0_cnt0
+3860                     	xref	_pow
+3861                     	xref	_isalnum
+3862                     	xdef	_tx_stat
+3863                     	switch	.const
+3864  000a               L704:
+3865  000a 41800000      	dc.w	16768,0
+3866                     	xref.b	c_lreg
+3867                     	xref.b	c_x
+3887                     	xref	c_imul
+3888                     	xref	c_ftoi
+3889                     	xref	c_itof
+3890                     	xref	c_xymvx
+3891                     	xref	c_sdivx
+3892                     	end
